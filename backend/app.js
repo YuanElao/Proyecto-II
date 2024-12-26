@@ -8,9 +8,9 @@ const express = require ('express');
 const morgan = require ('morgan');
 const cors = require ('cors');
 const path = require ('path');
-
-
 const app = express();
+
+
 
 //Middlewares
 app.use(morgan('tiny'));
@@ -22,7 +22,7 @@ console.log(__dirname)
 
 //Rutas
 
-app.get('/', (req, res) => { res.send('Hello'); })
+app.use('/', require('./routes/auth.routes'));
 
 
 //Ajustes
