@@ -23,6 +23,7 @@ console.log(__dirname)
 //Rutas
 
 app.use('/', require('./routes/auth.routes'));
+app.use('/user', require('./routes/register.routes'));
 
 
 //Ajustes
