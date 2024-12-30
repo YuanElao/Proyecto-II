@@ -4,7 +4,7 @@ const register = require ('../controllers/register');
 const router = express.Router();
 
 
-router.post ('/register', register.user)
+router.post ('/register', register.worker)
 
 
 

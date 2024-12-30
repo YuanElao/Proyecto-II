@@ -5,7 +5,7 @@ const QRCode = require ('qrcode')
 
 const register = {};
 
-register.user = async (req, res) =>{
+register.worker = async (req, res) =>{
     const {tname, tapellido, tcedula} = req.body;
 
     try {

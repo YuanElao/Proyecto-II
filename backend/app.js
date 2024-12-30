@@ -24,6 +24,7 @@ console.log(__dirname)
 
 app.use('/', require('./routes/auth.routes'));
 app.use('/user', require('./routes/register.routes'));
+app.use('/app', require('./routes/qrAssist.routes'));
 
 
 //Ajustes
