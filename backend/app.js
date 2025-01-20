@@ -9,6 +9,27 @@ const morgan = require ('morgan');
 const cors = require ('cors');
 const path = require ('path');
 const app = express();
+const cron = require ('node-cron')
+
+//Segundo Plano
+
+const {faultsRegister} = require('./controllers/faults');
+
+cron.schedule('* 12 * * 1-5', async () => {
+
+    console.log('Ejecutado...');    
+    
+    try {
+        await faultsRegister();
+        console.log('Faltas registradas!');
+
+    } catch (error) {
+        console.log('Error al registrar las faltas:', error.message);}
+} , {
+
+    timezone: "America/Caracas"
+});
+
 
 
 
@@ -26,6 +47,10 @@ app.use('/', require('./routes/auth.routes'));
 app.use('/user', require('./routes/register.routes'));
 app.use('/app', require('./routes/qrAssist.routes'));
 app.use('/user', require ('./routes/consult.routes'));
+app.use('/app', require ('./routes/faults.routes'))
+
+
+
 
 //Ajustes
 

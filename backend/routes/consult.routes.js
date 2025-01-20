@@ -3,7 +3,7 @@ const consult = require ('../controllers/consult')
 
 const router = express.Router();
 
-router.get('/consult', consult.getT);
+router.get('/consulta', consult.getT);
 
 
 module.exports = router ;

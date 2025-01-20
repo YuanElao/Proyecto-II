@@ -28,10 +28,21 @@ CREATE TABLE permisos (
     id_trabajador VARCHAR(5),
     fecha DATE NOT NULL,
     motivo VARCHAR (255) NOT NULL,
-    fecha_incio DATE NOT NULL,
+    fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,
     FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador) ON DELETE CASCADE
 );
+
+CREATE TABLE faltas (
+
+    id_f SERIAL PRIMARY KEY,
+    id_trabajador VARCHAR(5) NOT NULL,
+    fecha DATE NOT NULL,
+    FOREIGN KEY (id_trabajador) REFERENCES trabajadores(id_trabajador) ON DELETE CASCADE
+
+
+);
+
 
 CREATE TABLE auditoria (
 

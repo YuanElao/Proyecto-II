@@ -11,7 +11,7 @@ const getT = async (req, res) => {
         const params = [];
         if (search) {
 
-            query = 'SELECT t_cedula, t_name, t_apellido FROM trabajadores WHERE t_cedula ILIKE $1 OR t_name ILIKE $1 OR t_apellido ILIKE $1 ORDER BY t_apellido ASC, t_name ASC';
+            query = 'SELECT t_cedula, t_name, t_apellido FROM trabajadores WHERE t_cedula ILIKE $1 ORDER BY t_apellido ASC, t_name ASC';
             params.push(`%${search}%`);
         }
 
