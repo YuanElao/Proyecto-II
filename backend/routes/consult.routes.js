@@ -1,9 +1,9 @@
 const express = require ('express');
-const consult = require ('../controllers/consult')
+const {getW, workerList} = require ('../controllers/consult')
 
 const router = express.Router();
 
-router.get('/consulta', consult.getT);
-
+router.get('/consult', getW);
+router.get('/list', workerList);
 
 module.exports = router ;

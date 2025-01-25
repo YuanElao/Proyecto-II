@@ -25,32 +25,27 @@ const qrAssistRe = async (req, res) => {
 
         const assist = await pool.query('SELECT * FROM asistencias WHERE id_trabajador = $1 AND fecha = CURRENT_DATE', [tId]);
 
-        if (assist.rows.length > 0){
-            console.log('El trabajador tiene una asistencia registrada para hoy');
+        if (assist.rows.length > 0 ){
+            console.log('El trabajador ya fue registrado');
             return res.status(400).json({ message: 'No se pudo registrar la asistencia: asistencia registrada previamente'});
+                
+        } 
+
+        const permission = await pool.query('SELECT * FROM permisos WHERE id_trabajador = $1 AND CURRENT_DATE BETWEEN fecha_inicio AND fecha_fin',[tId]);
+ 
+        if (permission.rows.length > 0 ){
+            console.log('El trabajador ya fue registrado');
+            return res.status(400).json({ message: 'No se pudo registrar la asistencia: permiso registrado previamente'});
                 
         }
 
-        //Verificar si el trabajador tiene una falta hoy
-
         const fault = await pool.query('SELECT * FROM faltas WHERE id_trabajador = $1 AND fecha = CURRENT_DATE', [tId]);
 
-        if (fault.rows.length > 0) {
-            console.log('El trabajador tiene una falta registrada para hoy');
-            return res.status(400).json({ message: 'No se pudo registrar la asistencia: falta registrada previamente'})
-        }
-
-
-        //Verificar si el trabajador tiene permisos activo
-
-        const permission = await pool.query('SELECT * FROM permisos WHERE id_trabajador = $1 AND CURRENT_DATE BETWEEN fecha_inicio AND fecha_fin',[tId]);
-
-        if (permission.rows.length > 0) {
-            console.log('El trabajador tiene un permiso registrado para hoy');
-            return res.status(400).json({ message: 'No se pudo registrar la asistencia: permiso registrado previamente'})
-        }
-
-
+        if (fault.rows.length > 0 ){
+            console.log('El trabajador ya fue registrado');
+            return res.status(400).json({ message: 'No se pudo registrar la asistencia: falta registrada previamente'});
+                
+        }  
         //Registar la asistencia en la base de datos
 
         await pool.query('INSERT INTO asistencias (id_trabajador, fecha, hora) VALUES ($1, CURRENT_DATE, CURRENT_TIME)',[tId]);

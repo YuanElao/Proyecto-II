@@ -15,13 +15,13 @@ const cron = require ('node-cron')
 
 const {faultsRegister} = require('./controllers/faults');
 
-cron.schedule('* 12 * * 1-5', async () => {
+cron.schedule('00 12 * * 1-5', async () => {
 
     console.log('Ejecutado...');    
     
     try {
         await faultsRegister();
-        console.log('Faltas registradas!');
+        console.log('Proceso de Faltas finalizado');
 
     } catch (error) {
         console.log('Error al registrar las faltas:', error.message);}
@@ -29,8 +29,6 @@ cron.schedule('* 12 * * 1-5', async () => {
 
     timezone: "America/Caracas"
 });
-
-
 
 
 //Middlewares
@@ -44,11 +42,20 @@ console.log(__dirname)
 //Rutas
 
 app.use('/', require('./routes/auth.routes'));
-app.use('/user', require('./routes/register.routes'));
-app.use('/app', require('./routes/qrAssist.routes'));
-app.use('/user', require ('./routes/consult.routes'));
-app.use('/app', require ('./routes/faults.routes'))
 
+//User
+
+app.use('/user', require('./routes/register.routes'));
+app.use('/user', require ('./routes/consult.routes'));
+
+
+//app
+app.use('/app', require('./routes/qrAssist.routes'));
+app.use('/app', require ('./routes/faults.routes'));
+
+//Admin
+
+app.use('/admin', require('./routes/admin/permissions.routes'))
 
 
 

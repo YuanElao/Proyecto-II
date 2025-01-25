@@ -26,7 +26,6 @@ CREATE TABLE permisos (
 
     id_p SERIAL PRIMARY KEY,
     id_trabajador VARCHAR(5),
-    fecha DATE NOT NULL,
     motivo VARCHAR (255) NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE NOT NULL,

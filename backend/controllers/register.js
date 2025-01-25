@@ -1,7 +1,5 @@
 const pool = require ('../database/keys');
 const crypto = require ('crypto')
-const QRCode = require ('qrcode')
-
 
 const register = {};
 
@@ -39,16 +37,14 @@ register.worker = async (req, res) =>{
         await pool.query('INSERT INTO trabajadores (id_trabajador, t_name, t_apellido, t_cedula) VALUES ($1, $2, $3, $4)', [tid, formattedTName, formattedTApellido, formattedTCedula]);
 
 
-        const qrCode = await QRCode.toDataURL(tid);
-
         res.status(201).json({
             message: 'Trabajador registrado exitosamente',
-            data: {tid, formattedTName, formattedTApellido, formattedTCedula, qrCode},
+            data: {tid, formattedTName, formattedTApellido, formattedTCedula},
         });
     } catch (error){
         console.error('Error al registrar trabajador', error);
         res.status(500).json({
-            message:'Error del servidor', error
+            message:'Error del registrar', error
         });
     }
 
