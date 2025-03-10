@@ -43,27 +43,13 @@ CREATE TABLE faltas (
 );
 
 
-CREATE TABLE auditoria (
-
-
-    id_log SERIAL PRIMARY KEY,
-    accion VARCHAR(50) NOT NULL,
-    detalles TEXT,
-    id_actor VARCHAR(5),
-    fecha_hora_log TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-
-
-
-
-);
 
 CREATE TABLE login (
 
 
-    id_cuentas SERIAL PRIMARY KEY,
-    cuentasName TEXT NOT NULL,
-    llave VARCHAR(25) NOT NULL,
-    rol TEXT NOT NULL
+    c_id SERIAL PRIMARY KEY,
+    c_name TEXT NOT NULL,
+    c_password VARCHAR(25) NOT NULL,
+    c_rol TEXT NOT NULL,
+    c_root INT
 );
-
-INSERT INTO login(c_name, c_password, c_rol) VALUES ('administrador', '#204lc4ld14', 'admin' ), ('usuario', 'presu25','user');

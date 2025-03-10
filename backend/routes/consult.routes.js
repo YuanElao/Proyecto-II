@@ -1,9 +1,10 @@
-const express = require ('express');
-const {getW, workerList} = require ('../controllers/consult')
+const express = require("express");
+const getW = require("../controllers/consult");
+const authenticateJWT = require('../authmiddle');
 
 const router = express.Router();
 
-router.get('/consult', getW);
-router.get('/list', workerList);
+router.get("/workers", getW.list);
+router.get("/worker", getW.search);
 
-module.exports = router ;
+module.exports = router;
