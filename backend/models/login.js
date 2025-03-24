@@ -34,12 +34,12 @@ class Login {
             //Usuario encontrado, generamos el JWT
 
             const payload = {
-                rol: user.c_rol,
+                role: user.c_rol,
                 root: user.c_root === 1, //1 es root, 0 no lo es
             };
 
             const token = this.generarToken(payload);
-            return {user, token};
+            return {token};
         } catch (error) {
             console.error("Error en la consulta: ", error);
             return null;

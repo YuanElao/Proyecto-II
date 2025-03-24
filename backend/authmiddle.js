@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('./models/login');
+const Login = require('./models/login');
 
 const authenticateJWT = (role, root) => {
 
@@ -11,7 +11,7 @@ const authenticateJWT = (role, root) => {
             return res.status(401).json({message: 'Token no proporcionado'});
         }
 
-        jwt.verify(token, JWT_SECRET, (err, user) => {
+        jwt.verify(token, Login.JWT_SECRET, {algorithms: ['HS256']}, (err, user) => {
             if (err) {
                 return res.status(403).json({message: 'Token invalido'});
             }

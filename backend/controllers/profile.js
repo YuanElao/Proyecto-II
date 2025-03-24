@@ -1,146 +1,93 @@
-const pool = require("../database/keys");
-const QRcode = require("qrcode");
+const Trabajador = require('../models/trabajador');
+const Asistencia = require ("../models/asistencias");
+const Falta = require("../models/faltas");
+const Permiso = require("../models/permisos");
 
-// Obtener datos básicos del trabajador
-const getW = async (cedula) => {
-  const result = await pool.query(
-    `SELECT id_trabajador, t_name, t_apellido, t_cedula FROM trabajadores WHERE t_cedula = $1;`,
-    [cedula]
-  );
+const QRCode = require("qrcode");
 
-  if (result.rows.length === 0) {
-    console.log("Trabajador no encontrado");
-  }
+const getP = {
 
-  return result.rows[0];
-};
+  async profile(req, res) {
+    const { cedula } = req.params;
 
-// Obtener contadores de asistencias, faltas y permisos
-const getCount = async (id_trabajador) => {
-  const result = await pool.query(
-    `SELECT 
-         COUNT(DISTINCT a.fecha) AS dias_asistidos,
-         COUNT(DISTINCT f.fecha) AS dias_faltas,
-         COUNT(DISTINCT p.fecha_inicio) AS dias_permisos
-    FROM trabajadores t
-        LEFT JOIN 
-            asistencias a ON t.id_trabajador = a.id_trabajador
-        LEFT JOIN 
-            faltas f ON t.id_trabajador = f.id_trabajador
-        LEFT JOIN 
-            permisos p ON t.id_trabajador = p.id_trabajador
-        WHERE 
-            t.id_trabajador = $1
-        GROUP BY 
-            t.id_trabajador;
-        `,
-    [id_trabajador]
-  );
+    try {
 
-  if (result.rows.length === 0) {
-    throw new Error("No se encontraron datos para los contadores");
-  }
-
-  return result.rows[0];
-};
-
-// Obtener datos del calendario
-const getCalendar = async (id_trabajador) => {
-  const result = await pool.query(
-    `SELECT 
-        COALESCE(JSON_AGG(a.fecha ORDER BY a.fecha) FILTER (WHERE a.fecha IS NOT NULL), '[]') AS days_assist,
-        COALESCE(JSON_AGG(f.fecha ORDER BY f.fecha) FILTER (WHERE f.fecha IS NOT NULL), '[]') AS days_fault,
-        COALESCE(JSON_AGG(p.fecha_inicio ORDER BY p.fecha_inicio) FILTER (WHERE p.fecha_inicio IS NOT NULL), '[]') AS days_permission
-    FROM 
-        trabajadores t
-    LEFT JOIN 
-        asistencias a ON t.id_trabajador = a.id_trabajador
-    LEFT JOIN 
-        faltas f ON t.id_trabajador = f.id_trabajador
-    LEFT JOIN 
-        permisos p ON t.id_trabajador = p.id_trabajador
-    WHERE 
-        t.id_trabajador = $1
-    GROUP BY 
-        t.id_trabajador;`,
-    [id_trabajador]
-  );
-
-  if (result.rows.length === 0) {
-    return { calendar: [] }; // Devolver array vacío si no hay registros
-  }
-
-  const calendar = result.rows[0];
-
-  // Convertir valores nulos a arrays vacíos
-  const daysAssist = calendar.days_assist || [];
-  const daysFault = calendar.days_fault || [];
-  const daysPermission = calendar.days_permission || [];
-
-  // Crear eventos en el formato de FullCalendar
-  const events = [];
-
-  daysAssist.forEach((fecha) => {
-    events.push({ title: "Asistencia", start: fecha, color: "green" });
-  });
-
-  daysFault.forEach((fecha) => {
-    events.push({ title: "Falta", start: fecha, color: "red" });
-  });
-
-  daysPermission.forEach((fecha) => {
-    events.push({ title: "Permiso", start: fecha, color: "yellow" });
-  });
-
-  return { calendar: events };}
-
-// Generar código QR
-const getQR = (id_trabajador) => {
-  return new Promise((resolve, reject) => {
-    QRcode.toDataURL(id_trabajador, (err, url) => {
-      if (err) {
-        return reject(err);
+      //Obtener datos del trabajador
+      const trabajador = await Trabajador.obtainByCi(cedula);
+      if (!trabajador) {
+        return res.status(404).json({ message: "Trabajador no encontrado" });
       }
-      resolve(url);
-    });
-  });
-};
 
-// Controlador Principal
-const getP = async (req, res) => {
-  const { cedula } = req.params;
+      //Contadores: Asistencias, Faltas y Permisos
 
-  try {
-    // Obtener datos básicos del trabajador
-    const worker = await getW(cedula);
+      const asistencias = await Asistencia.countAttendance(trabajador.id_trabajador);
 
-    // Obtener contadores
-    const count = await getCount(worker.id_trabajador);
+      const faltas = await Falta.countFaults(trabajador.id_trabajador);
 
-    // Obtener datos del calendario
-    const calendar = await getCalendar(worker.id_trabajador);
+      const permisos = await Permiso.countPermission(trabajador.id_trabajador);
 
-    // Generar código QR
-    const qrCode = await getQR(worker.id_trabajador);
+      //Obtener eventos para el calendario (asistencias, faltas, permisos)
 
-    // Respuesta final
-    return res.status(200).json({
-      trabajador: {
-        id_trabajador: worker.id_trabajador,
-        nombre: worker.t_name,
-        apellido: worker.t_apellido,
-        cedula: worker.t_cedula,
-        qr_code: qrCode,
-      },
-      count, // Totales de asistencias, faltas y permisos
-      calendar, // Eventos del calendario
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: error.message });
+      const calendario = await getP.calendar(trabajador.id_trabajador);
+
+      //Generar código QR del trabajador
+      const qrCode = await QRCode.toDataURL(trabajador.id_trabajador);
+      console.log(qrCode)
+      //Responder con los datos del perfil
+      return res.status(200).json({
+        trabajador: {
+          nombre: trabajador.t_name,
+          apellido: trabajador.t_apellido,
+          cedula: trabajador.t_cedula,
+          departamento: trabajador.departamento,
+          cargo: trabajador.cargo,
+          qr_code: qrCode,
+        },
+        contadores: {
+          asistencias,
+          faltas,
+          permisos,
+        },
+        calendario,
+      });
+      
+    } catch (error) {
+      console.error("Error al obtener perfil:", error);
+      return res.status(500).json({ message: "Error interno del servidor" });
+    }
+  },
+
+  async calendar(id_trabajador) {
+    try {
+      const asistencias = await Asistencia.getDates(id_trabajador);
+      const faltas = await Falta.getDates(id_trabajador);
+      const permisos = await Permiso.getDates(id_trabajador); 
+  
+      const eventos = [
+        ...asistencias.map(fecha => ({
+          title: "Asistencia",
+          start: fecha,
+          color: "green"
+        })),
+        ...faltas.map(fecha => ({
+          title: "Falta",
+          start: fecha,
+          color: "red"
+        })),
+        ...permisos.map(({fecha, motivo}) => ({
+          title: "Permiso",
+          start: fecha,
+          color: "yellow",
+          description: motivo
+        }))
+      ];
+  
+      return eventos;
+    } catch (error) {
+      console.error("Error al obtener calendario:", error);
+      return [];
+    }
   }
 };
 
-module.exports = {
-  getP
-};
+module.exports = getP;

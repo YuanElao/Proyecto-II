@@ -16,14 +16,11 @@ const getW = {
 
   // Buscar trabajadores con un término de búsqueda
   async search(req, res) {
-    const { search } = req.query;
-
-    if (!search) {
-      return res.status(400).json({ message: "El parámetro 'search' es requerido" });
-    }
+    const { search, departamento, cargo } = req.query;
 
     try {
-      const trabajadores = await Trabajador.searchWorker(search);
+      console.log("Parametros Recibidos:", req.query);
+      const trabajadores = await Trabajador.searchWorker(search, departamento, cargo);
       res.status(200).json(trabajadores);
     } catch (error) {
       console.error("Error al buscar trabajador:", error);

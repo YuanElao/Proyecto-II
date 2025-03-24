@@ -1,0 +1,135 @@
+@import url(https//fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap);
+
+/*Letras y estructura seleccionadas para toda la pagina*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/*Fondo general*/
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url(../img/login.png);
+    background-size: cover;
+    background-position: center;
+
+}
+ /*fondo cuadrado de Login y otras opciones predeterminadas*/
+
+ .logo {
+    background: url(../logo/logo.png);
+    width: 80px;
+ }
+.fondo {
+    width: 420px;
+    background: white; /*Cuadro transparente*/
+    border: 2px solid rgba(255, 255, 255);
+    backdrop-filter: blur(20px); /*Filtro de cuadro borroso*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: #000000; /*color de letras preestablecidas*/
+    border-radius: 10px; /*Esquinas del cuadro curveadas*/
+    padding: 30px 40px; /*Separacion de la parte superior e inferior con el contenido de las seldas*/
+}
+
+/*Tamaño y alineación del titulo principal*/
+.fondo h1 {
+    font-size: 36px;
+    text-align: center;
+
+}
+
+/*Formas de los inputs*/
+.fondo .input-box {
+    position: relative; /*Posición de iconos*/
+    width: 100%; /*ocupación de formas*/
+    height: 50px; /*Margen de separación superior e inferior*/
+    margin: 30px 0; /*Separación de inputs y otros contenidos*/
+
+}
+
+/*Estructuras de inputs*/
+.input-box input {
+    width: 100%; /*longitud de formas*/
+    height: 100%; /*grosor de formas*/
+    background: transparent; /*transparencia total*/
+    border: none;
+    outline: none;
+    border: 2px solid rgba(0, 0, 0, 2); /*grosor y color de lineas de formas*/
+    border-radius: 40px; /*lineas curveadas en los lados izquierdo y derecho*/
+    font-size: 16px; /*tamaños de letras*/
+    color: #000000; /*color de líneas*/
+    padding: 20px 45px 20px 20px; /*Placeholder separado de linea blanca*/
+}
+
+/*placeholder blanco*/
+.input-box input::placeholder {
+    color: #a5a5a5; 
+}
+
+/*posición de iconos*/
+.input-box i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+
+}
+
+.role {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+/*posicion de recordar... y la interrogante de al lado*/
+/*.fondo .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+}
+
+.remember-forgot label input {
+    accent-color: #fff;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #fff;
+    text-decoration: none;
+}*/
+
+
+
+/*Botón de Login*/
+.fondo .btn {
+    width: 100%;
+    height: 45px;
+    background: #ffffff;
+    border: 2px solid rgba(0, 0, 0, 2); /*grosor y color de lineas de formas*/
+    outline: none;
+    border-radius: 40px; /*lados curveados*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333333;
+    font-weight: 600; /*Grosor de letras*/
+}
+
+.fondo .btn:hover {
+    color: black;
+    background: #c2f5f5;
+
+}
+
+.fondo .role {
+    position: relative;
+    margin-bottom: 20px;
+    
+}

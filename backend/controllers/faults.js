@@ -1,7 +1,7 @@
 const Falta = require("../models/faltas");
 const Trabajador = require("../models/trabajador");
 
-const faultsRegister = {
+const faults = {
 
   async register(req, res) {
 
@@ -32,4 +32,4 @@ const faultsRegister = {
   }
 };
 
-module.exports = faultsRegister ;
+module.exports = faults ;

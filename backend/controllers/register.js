@@ -1,19 +1,19 @@
 const Trabajador = require('../models/trabajador');
 
-const register = {
+const worker = {
 
-  async worker(req, res) {
+  async register(req, res) {
 
-    const { tname, tapellido, tcedula } = req.body;
+    const { tname, tapellido, tcedula, id_departamento, id_cargo } = req.body;
 
-    if (!tname || !tapellido || !tcedula) {
+    if (!tname || !tapellido || !tcedula || !id_departamento || !id_cargo) {
       return res.status(400).json({message: "Todos los campos son obligatorios"});
     }
 
     try {
-      const worker = new Trabajador(tname, tapellido, tcedula);
-      const newWorker = await worker.registerWorker();
-
+      const workman = new Trabajador(tname, tapellido, tcedula, id_departamento, id_cargo);
+      const newWorkman = await workman.registerWorker();
+      console.log("Trabajador registrado con exito")
       res.status(201).json({message: "Trabajador registrado con exito"});
 
     } catch (error) {
@@ -24,4 +24,4 @@ const register = {
   }
 };
 
-module.exports = register;
+module.exports = worker;

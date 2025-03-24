@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permisos</title>
+    <link rel="stylesheet" href="../../css/admin/permisos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+</head>
+<body>
+    <!--Menú Superior-->
+    <header class="fondo-menu">
+        <div class="menu-container">
+            <div class="logo">
+                <img src="../../img/logo.png" alt="Logo" />
+            </div>
+            <nav class="nav-menu">
+                <ul class="menu-horizontal">
+                    <li><a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a></li>
+                    <li><a href="Consultar.html" class="menu blue"><i class="bx bxs-search-alt-2"></i>Consulta</a></li>
+                    <li><a href="permisos.html" class="menu blue here"><i class="bi bi-clipboard2-check-fill"></i>Permisos</a></li>
+                    <li><a href="#" class="menu blue"><i class="bx bxs-grid-alt"></i>Secciones</a></li>
+                    <li><a href="#" class="menu blue"><i class="bx bxs-buildings"></i>Departamentos</a></li>
+                    <li><a href="#" id="cerrarSesion" class="menu blue cerrar-sesion"><i class="bx bxs-log-out"></i>Cerrar sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <div class="fondo2">
+            <form action="" id="form">
+                <h1>Permisos</h1>
+    
+                <div class="seleccionable">
+                    <select name="" id="departamento" class="seleccionable2 left">
+                        <option value="" disabled selected>Departamento</option>
+
+                    </select>
+                    <select name="" id="cargo" class="seleccionable2 right">
+                        <option value="" disabled selected>Cargo</option>
+
+                    </select>
+                </div>
+
+                <div class="seleccionable">
+                    <select name="" id="trabajador" class="seleccionable1 left">
+                        <option value="" disabled selected>Trabajador</option>
+                    </select>
+                </div>
+           
+                <div class="input-box">
+                    <label for="Fecha-Inicio">Fecha de Inicio</label>
+                    <input type="date" id="fecha_inicio" placeholder="Nombre" required>
+                </div>
+                <div class="input-box">
+                    <label for="Fecha-Culminación">Fecha de culminación</label>
+                    <input id="fecha_fin" type="date" placeholder="Apellido" required>
+                </div>
+                <p class="align">Motivo</p>
+                <textarea name="Motivo" id="motivo"></textarea>
+                <button type="submit" class="btn">Añadir Permiso</button>
+            </form>
+        </div>
+        </main>
+        <script src= "../../js/logout.js"></script>
+        <script src="../../js/admin/permisos.js"></script>
+    </body>
+    </html>

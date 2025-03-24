@@ -33,8 +33,20 @@ class Falta {
         "INSERT INTO faltas (id_trabajador, fecha) VALUES ($1, CURRENT_DATE)",
         [this.tId]
       );
+
+  }
+
+  static async countFaults(id_trabajador) {
+    const result = await pool.query("SELECT COUNT(*) AS total FROM faltas WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE)", [id_trabajador]);
+    return result.rows[0].total
+  }
     
+  static async getDates(id_trabajador) {
+    const result = await pool.query("SELECT TO_CHAR(fecha, 'YYYY-MM-DD') AS fecha FROM faltas WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) ORDER BY fecha", [id_trabajador]);
+    return result.rows.map(row => row.fecha);
   }
 }
+
+
 
 module.exports = Falta;

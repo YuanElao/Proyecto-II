@@ -14,9 +14,9 @@ authentication.login = async (req, res) => {
 
       return res.status(404).json({ message: "Usuario o contraseña incorrectos"});
     }
-    const {user, token} = result;
+    const {token} = result;
 
-    return res.status(200).json({message: `Bienvenido ${role === "admin" ? "Administrador" : "Secretario"}`, token, user,});
+    return res.status(200).json({message: token});
   } catch (error) {
     console.error("Error al iniciar sesion", error);
     return res.status(500).json({

@@ -1,0 +1,222 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Asegura que el padding y el borde no afecten el ancho total */
+}
+
+body {
+    font-family: Arial, sans-serif; /* Fuente general */
+    background-color: #f0f4f8; /* Color de fondo suave */
+}
+
+/* Estilos del Menú */
+.fondo-menu {
+    background: linear-gradient(135deg, #69c5fa, #298df8); /* Degradado de fondo */
+    padding: 20px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra del menú */
+}
+
+.menu-container {
+    display: flex;
+    justify-content: space-between; /* Espacio entre elementos */
+    align-items: center; /* Centra verticalmente */
+    max-width: 1200px; /* Ancho máximo del menú */
+    margin: 0 auto; /* Centra el menú en la página */
+}
+
+.menu {
+    color: #fff;
+    display: inline-block;
+    font-size: 1.25em;
+    margin: 0 15px; /* Espaciado entre los elementos del menú */
+    padding: 10px 20px; /* Espaciado interno */
+    border-radius: 25px; /* Bordes redondeados */
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.3s; /* Transición suave */
+}
+
+.logo img {
+    height: 80px; /* Ajusta la altura del logo */
+    width: auto; /* Mantiene la proporción del logo */
+}
+
+/* Colores y efectos al pasar el mouse */
+.menu.blue {
+    background: #007bff; /* Color de fondo */
+}
+
+.menu:hover {
+    background: #0056b3; /* Color al pasar el mouse */
+    transform: translateY(-2px); /* Efecto de elevación */
+}
+
+/* Estilo especial para "Cerrar sesión" */
+.cerrar-sesion {
+    background: #dc3545; /* Color rojo para cerrar sesión */
+}
+
+.cerrar-sesion:hover {
+    background: #c82333; /* Color al pasar el mouse */
+}
+
+/* Aumentar y mejorar los iconos del menú */
+.menu i {
+    font-size: 1.5em; /* Aumenta el tamaño del icono */
+    margin-right: 8px; /* Espaciado entre el icono y el texto */
+    transition: transform 0.3s; /* Suave transición para el efecto al pasar el mouse */
+}
+
+.menu:hover i {
+    transform: scale(1.2); /* Aumenta ligeramente el tamaño del icono al pasar el mouse */
+}
+
+/*Cuerpo*/
+main {
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between; /* Espacio entre perfil y calendario */
+    padding: 20px;
+}
+
+/*Perfil*/
+.perfil {
+    display: flex;
+    background: white;
+    max-width: 35%;
+    max-height: 15%;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 60%; /* Ajustar según sea necesario */
+}
+
+.datos {
+    margin-right: 20px; /* Espacio entre datos y QR */
+}
+
+.info {
+    display: inline;
+}
+
+.input-box input {
+    width: 100%; /*longitud de formas*/
+    height: 100%; /*grosor de formas*/
+    background: transparent; /*transparencia total*/
+    border: 2px solid rgba(0, 0, 0, 2); /*grosor y color de lineas de formas*/
+    border-radius: 10px; /*lineas curveadas en los lados izquierdo y derecho*/
+    font-size: 20px; /*tamaños de letras*/
+    color: #000000; /*color de líneas*/
+    padding: 5px 10px; /*Placeholder separado de linea blanca*/
+    margin-bottom: 5vh;
+}
+
+.qr {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column; /* Cambiar a columna para centrar el botón */
+    align-items: center; /* Centrar horizontalmente */
+    justify-content: center; /* Centrar verticalmente */
+    margin-bottom: 1.2%;
+}
+
+.codigoqr {
+    max-width: 18vh; /* Ajustar tamaño del QR */
+}
+
+.btn-imprimir {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px; /* Espacio entre el QR y el botón */
+}
+
+.btn-imprimir:hover {
+    background-color: #0056b3;
+}
+
+/*seguimiento de asistencias, permisos y faltas*/
+.seguimiento {
+    display: block;
+    padding: 5px;
+    background: white;
+    width: 150px; /* Ajusta el ancho según sea necesario */
+    height: 100px; /* Permite que la altura se ajuste al contenido */
+    overflow: hidden; /* Para evitar que se salga del cuadro */
+    border: 1px solid #ccc; /* Opcional, para un marco */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.seguimiento ul {
+    list-style-type: none; /* Elimina las viñetas por defecto */
+    padding-left: 20px; /* Espacio a la izquierda */
+    margin: 0; /* Elimina el margen por defecto */
+}
+
+.seguimiento li {
+    position: relative; /* Necesario para posicionar el pseudoelemento */
+    margin-bottom: 5px; /* Espacio entre los elementos de la lista */
+}
+
+.asistencias::before {
+    content: ''; /* Crea un contenido vacío */
+    width: 10px; /* Ancho del cuadrado */
+    height: 10px; /* Alto del cuadrado */
+    background-color: green; /* Color verde para asistencias */
+    position: absolute; /* Posiciona el cuadrado */
+    left: -20px; /* Ajusta la posición a la izquierda */
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Compensa el centrado vertical */
+}
+
+.permisos::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: yellow;
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.faltas::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/*Calendario*/
+.calendario {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 35%; /* Ajustar según sea necesario */
+}
+
+.calendario table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendario th, .calendario td {
+    width: 14.28%; /* Para que cada celda ocupe el mismo ancho */
+    height: 50px; /* Altura de cada celda */
+    text-align: center;
+    border: 1px solid #ddd; /* Borde de las celdas */
+}
+
+.calendario th {
+    background-color: #007bff; /* Color de fondo de los encabezados */
+    color: white; /* Color del texto */
+}

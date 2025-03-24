@@ -1,9 +1,9 @@
 const express = require("express");
-const { permissionRegister } = require("../../controllers/admin/permissions");
+const permission = require("../../controllers/admin/permissions");
 const authenticateJWT = require('../../authmiddle');
 
 const router = express.Router();
 
-router.post("/permission", authenticateJWT('admin'), permissionRegister);
+router.post("/permission/add", permission.register);
 
 module.exports = router;

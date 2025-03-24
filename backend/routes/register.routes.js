@@ -1,9 +1,9 @@
 const express = require("express");
-const register = require("../controllers/register");
+const worker = require("../controllers/register");
 const authenticateJWT = require('../authmiddle');
 
 const router = express.Router();
 
-router.post("/register", authenticateJWT("user"), register.worker);
+router.post("/register", worker.register);
 
 module.exports = router;

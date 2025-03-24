@@ -4,7 +4,8 @@ const authenticateJWT = require('../authmiddle');
 
 const router = express.Router();
 
-router.get("/workers", getW.list);
-router.get("/worker", getW.search);
+router.get("/consult/workers", getW.list);
+router.get("/consult/worker", getW.search);
+
 
 module.exports = router;

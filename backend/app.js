@@ -60,6 +60,9 @@ app.use("/app", require("./routes/faults.routes"));
 //Admin
 
 app.use("/admin", require("./routes/admin/permissions.routes"));
+app.use("/admin", require("./routes/admin/profileAdmin.routes"));
+app.use("/admin", require("./routes/admin/job.routes.js"));
+app.use("/admin", require("./routes/admin/department.routes.js"));
 
 //Ajustes
 

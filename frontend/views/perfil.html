@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="../css/perfil.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+</head>
+<body>
+    <!--Menú Superior-->
+    <header class="fondo-menu">
+        <div class="menu-container">
+            <!-- Logo -->
+            <div class="logo">
+                <img src="../img/logo.png" alt="Logo" />
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a>
+                <a href="registrar.html" class="menu blue"><i class="bi bi-person-fill-add"></i>Registrar</a>
+                <a href="Consultar.html" class="menu blue"><i class="bi bi-person-fill-add"></i>Consultar</a>
+                <a href="#" id="cerrarSesion" class="menu blue cerrar-sesion"><i class='bx bxs-log-out'></i>Cerrar sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="perfil">
+            <div class="datos">
+                <!-- <h2>Perfil</h2> -->
+                <div class="info">
+                        <div class="input-box">
+                            <label for="nombre">Nombre: </label><br>
+                            <input type="text" id="nombre" value="" readonly>
+                        </div>
+                        <div class="input-box">
+                            <label for="apellido"> Apellido: </label> <br>
+                            <input type="text" id="apellido" value="" readonly>
+                        </div>
+                        <div class="input-box">
+                            <label for="Cedula">Cedula: </label>
+                            <input type="number" id="cedula" value="" readonly>
+                        </div>
+                </div>
+            </div>
+
+            <div class="datos">
+                <div class="input-box right">
+                    <label for="Departamento">Departamento:</label>
+                    <input type="text" value="" name="" id="departamento" readonly>
+                </div>
+                <div class="input-box right">
+                    <label for="Departamento">Cargo:</label>
+                    <input type="text" value="" name="" id="cargo" readonly>
+                </div>
+            </div>
+
+            <div class="qr">
+                <img src="../img/QR.png" alt="Código QR" class="codigoqr">
+                <input type="submit" id="qr" value="Imprimir" class="btn-imprimir">
+            </div>
+        </div>
+        
+
+
+        <div class="seguimiento">
+            <ul>
+                <li class="asistencias" id="countA">Asistencias: X</li>
+                <li class="permisos" id="countP">Permisos: Y</li>
+                <li class="faltas" id="countF">Faltas: Z</li>
+            </ul>
+        </div> 
+        <div class="calendario">
+            <h2>Calendario</h2>
+
+        </div>
+    </main>
+    <script src="../js/fullcalendar/core/index.global.js"></script>
+    <script src="../js/fullcalendar/daygrid/index.global.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/logout.js"></script>
+    
+</body>
+</html>
