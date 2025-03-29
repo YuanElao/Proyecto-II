@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departamento</title>
+    <link rel="stylesheet" href="../../css/admin/departamentos.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+</head>
+<body>
+    <!--Menú Superior-->
+    <header class="fondo-menu">
+        <div class="menu-container">
+            <div class="logo">
+                <img src="../../img/logo.png" alt="Logo" />
+            </div>
+            <nav class="nav-menu">
+                <ul class="menu-horizontal">
+                    <li><a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a></li>
+                    <li><a href="Consultar.html" class="menu blue"><i class="bx bxs-search-alt-2"></i>Consulta</a></li>
+                    <li><a href="permisos.html" class="menu blue"><i class="bi bi-clipboard2-check-fill"></i>Permisos</a></li>
+                    <li><a href="#" class="menu blue"><i class="bx bxs-grid-alt"></i>Secciones</a></li>
+                    <li><a href="departamentos.html" class="menu blue here"><i class="bx bxs-buildings"></i>Departamentos</a></li>
+                    <li><a href="#" class="menu blue cerrar-sesion"><i class="bx bxs-log-out"></i>Cerrar sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="tablas">
+        <!-- Tabla Departamentos -->
+        <table id="data-table">
+            <caption>Departamentos</caption> <!-- Título para la tabla de Departamentos -->
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PNFA</td>
+                    <td><button class="enlace">Modificar</button><button class="enlace">Eliminar</button></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    <!-- Seleccionable + boton para añadir departamento/cargo -->
+    <div class="fondo2">
+        <select class="seleccionable1" name="" id="">
+            <option value="departameto"> Crear Departamento</option>
+            <option value="cargo">Crear Cargo</option>
+        </select>
+        <button class="crear">Crear</button>
+    </div>
+
+        <!-- Tabla Cargos -->
+        <table id="data-table2">
+            <caption>Cargos</caption> <!-- Título para la tabla de Cargos -->
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Departamento</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Director</td>
+                    <td>PNFA</td>
+                    <td><button class="enlace">Modificar</button><button class="enlace">Eliminar</button></td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+    
+    
+</body>
+</html>
+
+

@@ -40,5 +40,13 @@
         </div>
     </main>
     <script src="../js/logout.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+            if(!sessionStorage.getItem("token")) {
+                alert('Debes iniciar sesion para acceder a la pagina');
+                window.location.href = '/frontend/views/login.html';
+            }
+        })
+    </script>
 </body>
 </html>

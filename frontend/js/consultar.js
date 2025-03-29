@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const departamentoFilter = document.getElementById('departamentoFilter');
     const tableBody = document.getElementById('tableBody')
     const token = sessionStorage.getItem('token')
+
+    
     //Cargar departamentos
     const loadDepartment = async () => {
 

@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const token = sessionStorage.getItem('token');
     const cedula = localStorage.getItem('cedulaActual');
+
+   
     // Obtener parámetro de la cédula
     
 

@@ -10,6 +10,16 @@ const worker = {
       return res.status(400).json({message: "Todos los campos son obligatorios"});
     }
 
+    const validarTexto = /^[A-Za-zÁÉÍÓÚáéíóúñÑ\s'-]+$/;
+
+    if(!validarTexto.test(tname)) {
+      return res.status(400).json({message: "El nombre no puede contener numeros o caracteres especiales"});
+    }
+
+    if(!validarTexto.test(tapellido)) {
+      return res.status(400).json({message: "El apellido no puede contener numeros o caracteres especiales"});
+    }
+
     try {
       const workman = new Trabajador(tname, tapellido, tcedula, id_departamento, id_cargo);
       const newWorkman = await workman.registerWorker();

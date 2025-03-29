@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    
+
     const departamentoSelect = document.getElementById('departamento')
     const cargoSelect = document.getElementById('cargo');
 

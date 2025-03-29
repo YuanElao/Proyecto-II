@@ -64,6 +64,17 @@
         </div>
         </main>
         <script src= "../../js/logout.js"></script>
+        <script>
+            const inputFechaInicio = document.getElementById("fecha_inicio")
+            const inputFechaFin = document.getElementById("fecha_fin")
+            const fechaActual = new Date();
+            const anoActual = fechaActual.getFullYear();
+
+            inputFechaInicio.min = `${anoActual}-01-01`;
+            inputFechaInicio.max = `${anoActual}-12-31`;
+            inputFechaFin.min = `${anoActual}-01-01`;
+            inputFechaFin.max = `${anoActual}-12-31`;
+        </script>
         <script src="../../js/admin/permisos.js"></script>
     </body>
     </html>
