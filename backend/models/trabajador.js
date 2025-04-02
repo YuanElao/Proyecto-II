@@ -169,8 +169,8 @@ class Trabajador {
 
     //Eliminar un Trabajador
 
-    static async deleteWorker (cedula) {
-        await pool.query("DELETE FROM trabajadores WHERE t_cedula = $1", [cedula]);
+    async deleteWorker () {
+        await pool.query("DELETE FROM trabajadores WHERE t_cedula = $1", [this.tcedula]);
     }
 }
 

@@ -1,6 +1,7 @@
 const pool = require("../database/keys");
 const jwt = require('jsonwebtoken');
 
+
 class Login {
     constructor() {
 
@@ -34,6 +35,7 @@ class Login {
             //Usuario encontrado, generamos el JWT
 
             const payload = {
+                id: user.c_id,
                 role: user.c_rol,
                 root: user.c_root === 1, //1 es root, 0 no lo es
             };

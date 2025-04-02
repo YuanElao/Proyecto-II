@@ -115,8 +115,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     //Logica de Faltas 
     document.querySelector('.enlace').addEventListener('click', async () => {
-        const password = prompt('Al presionar este boton esta deacuerdo con registrar faltas a todos aquellos trabajadores que aun no han registrado su asistencia. Para continuar, ingrese su contraseña nuevamente:');
-        if (!password) return;
+        const confirmacion = prompt('Al presionar este boton esta deacuerdo con registrar faltas a todos aquellos trabajadores que aun no han registrado su asistencia. Para continuar, escriba "confirmar":');
+
+        if (confirmacion?.toLowerCase() !== "confirmar") {
+            alert('Accioon cancelada. Debe escribir "confirmar" para continuar');
+            return;
+        }
 
         try {
             const response = await fetch('http://localhost:3000/admin/faltas/register', {
@@ -125,10 +129,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ password })
+               
             });
 
-            const data = await response.json();
             if (!response.ok) throw new Error(data.error);
             
             alert('Faltas registradas exitosamente');

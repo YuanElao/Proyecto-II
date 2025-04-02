@@ -4,6 +4,6 @@ const authenticateJWT = require('../authmiddle');
 
 const router = express.Router();
 
-router.post("/faltas/register",faults.register);
+router.post("/faltas/register", authenticateJWT('admin'),faults.register);
 
 module.exports = router;

@@ -31,16 +31,16 @@ class Cargo {
 
   //Editar un cargo
   
-  static async editJob() {
-    if (!this.c_name) throw new Error("El nombre no puede estar vacio.");
-    await pool.query("UPDATE cargo SET c_name = $1, id_departamento = $2 WHERE id_cargo = $3", [this.c_name,this.id_departamento,this.id_cargo]);
+  static async editJob(id_cargo, {c_name, id_departamento}) {
+    if (!c_name) throw new Error("El nombre no puede estar vacio.");
+    await pool.query("UPDATE cargo SET c_name = $1, id_departamento = $2 WHERE id_cargo = $3", [ c_name, id_departamento, id_cargo]);
   }
 
   //Eliminar un cargo
   
-  static async deleteJob() {
-    await pool.query("UPDATE trabajadores SET id_cargo = NULL WHERE id_cargo = $1", [this.id_cargo])
-    await pool.query("DELETE FROM cargo WHERE id_cargo = $1", [this.id_cargo]);
+  static async deleteJob(id_cargo) {
+    await pool.query("UPDATE trabajadores SET id_cargo = NULL WHERE id_cargo = $1", [id_cargo])
+    await pool.query("DELETE FROM cargo WHERE id_cargo = $1", [id_cargo]);
   }
 }
 

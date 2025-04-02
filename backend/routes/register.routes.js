@@ -4,6 +4,6 @@ const authenticateJWT = require('../authmiddle');
 
 const router = express.Router();
 
-router.post("/register", worker.register);
+router.post("/register", authenticateJWT(), worker.register);
 
 module.exports = router;

@@ -16,7 +16,7 @@ authentication.login = async (req, res) => {
     }
     const {token} = result;
 
-    return res.status(200).json({message: token});
+    return res.status(200).json({token});
   } catch (error) {
     console.error("Error al iniciar sesion", error);
     return res.status(500).json({

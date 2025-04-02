@@ -4,6 +4,6 @@ const authenticateJWT = require('../../authmiddle');
 
 const router = express.Router();
 
-router.post("/permission/add", permission.register);
+router.post("/permission/add",authenticateJWT('admin'), permission.register);
 
 module.exports = router;

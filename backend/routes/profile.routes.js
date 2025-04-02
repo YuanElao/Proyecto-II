@@ -4,7 +4,7 @@ const authenticateJWT = require('../authmiddle');
 
 const router = express.Router();
 
-router.get("/profile/:cedula", getP.profile);
+router.get("/profile/:cedula", authenticateJWT(), getP.profile);
 
 
 module.exports = router;
