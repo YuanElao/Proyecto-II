@@ -3,12 +3,15 @@
 //Morgan sirve para visualizar por consola las peticiones que se vayan haciendo al servidor
 //Cors permite que se acceda a nuesro servidor desde otros dominios
 //path permite trabajar con rutas de archivos y directorios
+//express es un framework usado para montar el servidor y getionar las rutas
+//node-cron
+
 
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const path = require("path");
-const app = express();
+const app = express(); // Crear Instancia de express
 const cron = require("node-cron");
 
 
@@ -27,18 +30,20 @@ cron.schedule(
     } catch (error) {
       console.log("Error al registrar las faltas:", error.message);
     }
+
   },
   {
     timezone: "America/Caracas",
   }
 );
 
-//Middlewares
-app.use(morgan("tiny"));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+//Middlewares, son aquellas capaz que agregan funcionalidades a las peticiones cuando estas son recibidas
+
+app.use(morgan("tiny")); //Informacion resumida de las peticiones
+app.use(cors()); //Pemitimos que se acceda al servidor desde otros dominios (frontend)
+app.use(express.json()); //Con este middle recibimos y convertimos JSON en objetos JavaScript
+app.use(express.urlencoded({ extended: true })); //Con este podemos recibir y procesar datos enviados desde un formulario HTML
+app.use(express.static(path.join(__dirname, "public")));//Sirve archivos estaticos que no necesian ser generados dinamicamente por el servidor
 console.log(__dirname);
 
 
@@ -64,6 +69,7 @@ app.use("/admin", require("./routes/admin/profileAdmin.routes"));
 app.use("/admin", require("./routes/admin/job.routes.js"));
 app.use("/admin", require("./routes/admin/department.routes.js"));
 app.use("/admin", require("./routes/faults.routes"));
+app.use("/admin", require("./routes/admin/accounts.routes.js"));
 
 //Ajustes
 

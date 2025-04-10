@@ -25,6 +25,7 @@ const authenticateJWT = (role, root) => {
 
                 return res.status(403).json({message: `Acceso denegado: se requiere permisos de nivel ${root}`});
             }
+            
             req.user = user;
             next();
         });

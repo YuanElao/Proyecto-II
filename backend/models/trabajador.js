@@ -48,6 +48,7 @@ class Trabajador {
 
     static async listWorkers() {
         const result = await pool.query(`SELECT 
+            t.id_trabajador,
             t.t_name AS nombre,
             t.t_apellido AS apellido,
             t.t_cedula,

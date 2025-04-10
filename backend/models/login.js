@@ -16,14 +16,9 @@ class Login {
             let result;
 
             //Verificamos si el rol es admin o usuario
-            if (role === "admin") {
-
-                result = await pool.query("SELECT * FROM login WHERE c_name = $1 AND c_password = $2 AND c_rol = $3", [name, password, role]);
-
-            } else {
-
-                result = await pool.query("SELECT * FROM login WHERE c_name = $1 AND c_password = $2 AND c_rol = $3",[name, password, role]);
-            }
+            
+             result = await pool.query("SELECT * FROM login WHERE c_name = $1 AND c_password = $2 AND c_rol = $3", [name, password, role]);
+            
 
             if (result.rows.length === 0) {
 
@@ -37,7 +32,7 @@ class Login {
             const payload = {
                 id: user.c_id,
                 role: user.c_rol,
-                root: user.c_root === 1, //1 es root, 0 no lo es
+                root: user.c_root, //1 es root, 0 no lo es
             };
 
             const token = this.generarToken(payload);

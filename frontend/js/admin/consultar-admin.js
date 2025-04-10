@@ -132,9 +132,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                
             });
 
+            if(response.ok){
+
+                alert('Faltas registradas exitosamente');
+            }
+
             if (!response.ok) throw new Error(data.error);
+
+
             
-            alert('Faltas registradas exitosamente');
+
         } catch (error) {
             alert(`Error: ${error.message}`);
         }
