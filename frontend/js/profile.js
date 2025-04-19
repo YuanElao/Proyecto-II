@@ -2,10 +2,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
 
 
-    const token = sessionStorage.getItem('token');
-    const cedula = localStorage.getItem('cedulaActual');
-
-   
+    
+    const cedula = localStorage.getItem('cedulaActual')
+    
+    
     // Obtener parámetro de la cédula
     
 
@@ -16,15 +16,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
+        const token = sessionStorage.getItem('token')
         // Obtener datos del trabajador
-        localStorage.removeItem('cedulaActual');
+        console.log("Este es el token:", token)
         const response = await fetch(`http://localhost:3000/user/profile/${cedula}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         });
         const data = await response.json();
+        console.log(data)
 
+        localStorage.removeItem('cedulaActual');
         // Llenar datos principales
         document.getElementById('nombre').value = data.trabajador.nombre;
         document.getElementById('apellido').value = data.trabajador.apellido;
@@ -39,6 +42,55 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('countA').textContent = `Asistencias: ${data.contadores.asistencias}`;
         document.getElementById('countP').textContent = `Permisos: ${data.contadores.permisos}`;
         document.getElementById('countF').textContent = `Faltas: ${data.contadores.faltas}`;
+
+        const calendario = data.calendario;
+        generarCalendarioAnual(calendario);
+        
+        // Agrega esta función al final del archivo:
+        function generarCalendarioAnual(eventos) {
+            const container = document.getElementById('calendarContainer');
+            const añoActual = new Date().getFullYear();
+            
+            for (let mes = 0; mes < 12; mes++) {
+                const primerDia = new Date(añoActual, mes, 1);
+                const ultimoDia = new Date(añoActual, mes + 1, 0);
+                
+                const divMes = document.createElement('div');
+                divMes.className = 'mes-calendario';
+                divMes.innerHTML = `
+                    <h3>${primerDia.toLocaleDateString('es-ES', { month: 'long' })}</h3>
+                    <div class="dias-semana">
+                        ${['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'].map(d => `<span>${d}</span>`).join('')}
+                    </div>
+                    <div class="dias-mes"></div>
+                `;
+                
+                const diasDiv = divMes.querySelector('.dias-mes');
+                const diasEnMes = ultimoDia.getDate();
+                
+                // Rellenar días
+                for (let i = 1; i <= diasEnMes; i++) {
+                    const dia = new Date(añoActual, mes, i);
+                    const fechaISO = dia.toISOString().split('T')[0];
+                    
+                    const diaElement = document.createElement('div');
+                    diaElement.className = 'dia';
+                    diaElement.textContent = i;
+                    
+                    // Buscar eventos para este día
+                    const eventosDia = eventos.filter(e => e.start.startsWith(fechaISO));
+                    if (eventosDia.length > 0) {
+                        diaElement.classList.add('evento');
+                        diaElement.style.color = eventosDia[0].color;
+                        diaElement.title = eventosDia.map(e => `${e.title}: ${e.description || ''}`).join('\n');
+                    }
+                    
+                    diasDiv.appendChild(diaElement);
+                }
+                
+                container.appendChild(divMes);
+            }
+        }
 
         // Configurar botón de imprimir
         document.getElementById('qr').addEventListener('click', imprimirCredencial);

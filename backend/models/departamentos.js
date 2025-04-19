@@ -28,7 +28,7 @@ class Departamento {
   //Editar un departamento
 
   static async editDep(id_departamento, d_name) {
-    if (!this.d_name) throw new Error("El nombre no puede estar vacio");
+    if (!d_name) throw new Error("El nombre no puede estar vacio");
     await pool.query("UPDATE departamento SET d_name = $1 WHERE id_departamento = $2", [d_name, id_departamento]);
   }
 

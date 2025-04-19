@@ -4,23 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
+    <link rel="stylesheet" href="../css/admin/barra.css">
     <link rel="stylesheet" href="../css/perfil.css">
+    <link rel="stylesheet" href="../css/calendario.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
 </head>
 <body>
     <!--Menú Superior-->
-    <header class="fondo-menu">
-        <div class="menu-container">
+    <header class="header-glass">
+        <div class="nav-container">
             <!-- Logo -->
-            <div class="logo">
-                <img src="../img/logo.png" alt="Logo" />
+            <div class="logo-hover">
+                <img src="../img/logo.png" alt="Logo" class="logo-img"/>
             </div>
-            <nav class="nav-menu">
-                <a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a>
-                <a href="registrar.html" class="menu blue"><i class="bi bi-person-fill-add"></i>Registrar</a>
-                <a href="Consultar.html" class="menu blue"><i class="bi bi-person-fill-add"></i>Consultar</a>
-                <a href="#" id="cerrarSesion" class="menu blue cerrar-sesion"><i class='bx bxs-log-out'></i>Cerrar sesión</a>
+            
+            <nav class="nav-links">
+                <a href="index.html" class="nav-item">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="registrar.html" class="nav-item">
+                    <i class="bi bi-person-fill-add"></i>
+                    <span>Registrar</span>
+                </a>
+                <a href="Consultar.html" class="nav-item">
+                    <i class="bi bi-search"></i>
+                    <span>Consultar</span>
+                </a>
+                <a href="#" id="cerrarSesion" class="nav-item logout">
+                    <i class='bx bxs-log-out'></i>
+                    <span>Cerrar sesión</span>
+                </a>
             </nav>
         </div>
     </header>
@@ -31,15 +46,15 @@
                 <!-- <h2>Perfil</h2> -->
                 <div class="info">
                         <div class="input-box">
-                            <label for="nombre">Nombre: </label><br>
+                            <label for="nombre">Nombre: </label>
                             <input type="text" id="nombre" value="" readonly>
                         </div>
                         <div class="input-box">
-                            <label for="apellido"> Apellido: </label> <br>
+                            <label for="apellido"> Apellido: </label>
                             <input type="text" id="apellido" value="" readonly>
                         </div>
                         <div class="input-box">
-                            <label for="Cedula">Cedula: </label>
+                            <label for="cedula">Cedula: </label>
                             <input type="number" id="cedula" value="" readonly>
                         </div>
                 </div>
@@ -56,28 +71,28 @@
                 </div>
             </div>
 
-            <div class="qr">
-                <img src="../img/QR.png" alt="Código QR" class="codigoqr">
-                <input type="submit" id="qr" value="Imprimir" class="btn-imprimir">
-            </div>
+
         </div>
         
 
 
         <div class="seguimiento">
             <ul>
-                <li class="asistencias" id="countA">Asistencias: X</li>
-                <li class="permisos" id="countP">Permisos: Y</li>
-                <li class="faltas" id="countF">Faltas: Z</li>
+                <li class="asistencias" id="countA">Asistencias:</li>
+                <li class="permisos" id="countP">Permisos:</li>
+                <li class="faltas" id="countF">Faltas:</li>
             </ul>
+            <div class="qr">
+                <img src="../img/QR.png" alt="Código QR" class="codigoqr">
+                <input type="submit" id="qr" value="Imprimir" class="btn-imprimir">
+            </div>
         </div> 
         <div class="calendario">
             <h2>Calendario</h2>
-
+            <div id="calendarContainer"></div>
         </div>
     </main>
-    <script src="../js/fullcalendar/core/index.global.js"></script>
-    <script src="../js/fullcalendar/daygrid/index.global.js"></script>
+
     <script src="../js/profile.js"></script>
     <script src="../js/logout.js"></script>
     

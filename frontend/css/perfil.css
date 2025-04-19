@@ -1,222 +1,348 @@
+/* =========== RESET Y ESTILOS BASE =========== */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Asegura que el padding y el borde no afecten el ancho total */
+    box-sizing: border-box;
+  }
+  
+  body {
+  font-family: "Poppins", Arial, sans-serif;
+  color: #ffffff;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #121212;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23222222' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%232a4a7f'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment: fixed;
 }
 
-body {
-    font-family: Arial, sans-serif; /* Fuente general */
-    background-color: #f0f4f8; /* Color de fondo suave */
-}
-
-/* Estilos del Menú */
-.fondo-menu {
-    background: linear-gradient(135deg, #69c5fa, #298df8); /* Degradado de fondo */
-    padding: 20px 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra del menú */
-}
-
-.menu-container {
+  
+  /* =========== LAYOUT PRINCIPAL =========== */
+  main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 25px;
+    grid-template-areas:
+      "perfil seguimiento"
+      "calendario calendario";
+  }
+  
+  /* =========== SECCIÓN DE PERFIL =========== */
+  .perfil {
+    grid-area: perfil;
+    background:transparent ;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     display: flex;
-    justify-content: space-between; /* Espacio entre elementos */
-    align-items: center; /* Centra verticalmente */
-    max-width: 1200px; /* Ancho máximo del menú */
-    margin: 0 auto; /* Centra el menú en la página */
-}
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid white;
+    background-image: linear-gradient(transparent,#2a4a7f);
+  }
 
-.menu {
-    color: #fff;
-    display: inline-block;
-    font-size: 1.25em;
-    margin: 0 15px; /* Espaciado entre los elementos del menú */
-    padding: 10px 20px; /* Espaciado interno */
-    border-radius: 25px; /* Bordes redondeados */
-    text-align: center;
-    text-decoration: none;
-    transition: background 0.3s, transform 0.3s; /* Transición suave */
-}
-
-.logo img {
-    height: 80px; /* Ajusta la altura del logo */
-    width: auto; /* Mantiene la proporción del logo */
-}
-
-/* Colores y efectos al pasar el mouse */
-.menu.blue {
-    background: #007bff; /* Color de fondo */
-}
-
-.menu:hover {
-    background: #0056b3; /* Color al pasar el mouse */
-    transform: translateY(-2px); /* Efecto de elevación */
-}
-
-/* Estilo especial para "Cerrar sesión" */
-.cerrar-sesion {
-    background: #dc3545; /* Color rojo para cerrar sesión */
-}
-
-.cerrar-sesion:hover {
-    background: #c82333; /* Color al pasar el mouse */
-}
-
-/* Aumentar y mejorar los iconos del menú */
-.menu i {
-    font-size: 1.5em; /* Aumenta el tamaño del icono */
-    margin-right: 8px; /* Espaciado entre el icono y el texto */
-    transition: transform 0.3s; /* Suave transición para el efecto al pasar el mouse */
-}
-
-.menu:hover i {
-    transform: scale(1.2); /* Aumenta ligeramente el tamaño del icono al pasar el mouse */
-}
-
-/*Cuerpo*/
-main {
-    font-size: 18px;
+  
+  
+  .perfil:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .datos {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .info {
     display: flex;
-    justify-content: space-between; /* Espacio entre perfil y calendario */
-    padding: 20px;
-}
+    flex-direction: column;
+  }
+  
+  .input-box {
+    margin-bottom: 15px;
+  }
+  
+  .input-box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+  
+  .input-box input {
+    width: 100%;
+    padding: 12px 15px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+  
+  .input-box input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
+  
+  .input-box input:read-only {
+    background-color: #f5f5f5;
+    cursor: default;
+  }
+  
 
-/*Perfil*/
-.perfil {
+  .qr {
     display: flex;
-    background: white;
-    max-width: 35%;
-    max-height: 15%;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 60%; /* Ajustar según sea necesario */
-}
-
-.datos {
-    margin-right: 20px; /* Espacio entre datos y QR */
-}
-
-.info {
-    display: inline;
-}
-
-.input-box input {
-    width: 100%; /*longitud de formas*/
-    height: 100%; /*grosor de formas*/
-    background: transparent; /*transparencia total*/
-    border: 2px solid rgba(0, 0, 0, 2); /*grosor y color de lineas de formas*/
-    border-radius: 10px; /*lineas curveadas en los lados izquierdo y derecho*/
-    font-size: 20px; /*tamaños de letras*/
-    color: #000000; /*color de líneas*/
-    padding: 5px 10px; /*Placeholder separado de linea blanca*/
-    margin-bottom: 5vh;
-}
-
-.qr {
-    margin-left: 20px;
-    display: flex;
-    flex-direction: column; /* Cambiar a columna para centrar el botón */
-    align-items: center; /* Centrar horizontalmente */
-    justify-content: center; /* Centrar verticalmente */
-    margin-bottom: 1.2%;
-}
-
-.codigoqr {
-    max-width: 18vh; /* Ajustar tamaño del QR */
-}
-
-.btn-imprimir {
-    padding: 10px 15px;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    min-width: 180px;
+  }
+  
+  .codigoqr {
+    max-width: 150px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .codigoqr:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-imprimir {
+    padding: 10px 20px;
     background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-top: 10px; /* Espacio entre el QR y el botón */
-}
-
-.btn-imprimir:hover {
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-imprimir:hover {
     background-color: #0056b3;
-}
-
-/*seguimiento de asistencias, permisos y faltas*/
-.seguimiento {
-    display: block;
-    padding: 5px;
-    background: white;
-    width: 150px; /* Ajusta el ancho según sea necesario */
-    height: 100px; /* Permite que la altura se ajuste al contenido */
-    overflow: hidden; /* Para evitar que se salga del cuadro */
-    border: 1px solid #ccc; /* Opcional, para un marco */
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.seguimiento ul {
-    list-style-type: none; /* Elimina las viñetas por defecto */
-    padding-left: 20px; /* Espacio a la izquierda */
-    margin: 0; /* Elimina el margen por defecto */
-}
-
-.seguimiento li {
-    position: relative; /* Necesario para posicionar el pseudoelemento */
-    margin-bottom: 5px; /* Espacio entre los elementos de la lista */
-}
-
-.asistencias::before {
-    content: ''; /* Crea un contenido vacío */
-    width: 10px; /* Ancho del cuadrado */
-    height: 10px; /* Alto del cuadrado */
-    background-color: green; /* Color verde para asistencias */
-    position: absolute; /* Posiciona el cuadrado */
-    left: -20px; /* Ajusta la posición a la izquierda */
-    top: 50%; /* Centra verticalmente */
-    transform: translateY(-50%); /* Compensa el centrado vertical */
-}
-
-.permisos::before {
-    content: '';
-    width: 10px;
-    height: 10px;
-    background-color: yellow;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-imprimir:active {
+    transform: translateY(0);
+  }
+  
+  /* =========== SEGUIMIENTO DE ASISTENCIAS =========== */
+  .seguimiento {
+    grid-area: seguimiento;
+    background: transparent;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid white;
+    background-image: linear-gradient(transparent,#2a4a7f);
+  }
+  
+  .seguimiento:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .seguimiento ul {
+    list-style-type: none;
+    padding: 10px;
+  }
+  
+  .seguimiento li {
+    position: relative;
+    padding: 12px 0 12px 30px;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .seguimiento li:last-child {
+    border-bottom: none;
+  }
+  
+  .asistencias::before,
+  .permisos::before,
+  .faltas::before {
+    content: "";
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
     position: absolute;
-    left: -20px;
+    left: 0;
     top: 50%;
     transform: translateY(-50%);
-}
-
-.faltas::before {
-    content: '';
-    width: 10px;
-    height: 10px;
-    background-color: red;
-    position: absolute;
-    left: -20px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/*Calendario*/
-.calendario {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 35%; /* Ajustar según sea necesario */
-}
-
-.calendario table {
+  }
+  
+  .asistencias::before {
+    background-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+  }
+  
+  .permisos::before {
+    background-color: #ffc107;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+  }
+  
+  .faltas::before {
+    background-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+  }
+  
+  /* =========== CALENDARIO =========== */
+  .calendario {
+    grid-area: calendario;
+    background: transparent;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-image: linear-gradient(transparent,#2a4a7f);
+    border: 1px solid white;
+  }
+  
+  .calendario:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .calendario h2 {
+    margin-bottom: 20px;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  
+  .calendario table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.calendario th, .calendario td {
-    width: 14.28%; /* Para que cada celda ocupe el mismo ancho */
-    height: 50px; /* Altura de cada celda */
+  }
+  
+  .calendario th,
+  .calendario td {
+    width: 14.28%;
+    height: 50px;
     text-align: center;
-    border: 1px solid #ddd; /* Borde de las celdas */
-}
-
-.calendario th {
-    background-color: #007bff; /* Color de fondo de los encabezados */
-    color: white; /* Color del texto */
-}
+    border: 1px solid #eee;
+  }
+  
+  .calendario th {
+    background-color: #007bff;
+    color: white;
+    font-weight: 500;
+    padding: 10px;
+  }
+  
+  .calendario td {
+    transition: background-color 0.3s ease;
+  }
+  
+  .calendario td:hover {
+    background-color: #f0f7ff;
+  }
+  
+  /* =========== MEDIA QUERIES =========== */
+  @media (max-width: 992px) {
+    main {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "perfil"
+        "seguimiento"
+        "calendario";
+    }
+  
+    .perfil {
+      flex-direction: column;
+    }
+  
+    .qr {
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .codigoqr {
+      margin-bottom: 0;
+      margin-right: 15px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .menu-container {
+      flex-direction: column;
+      padding: 10px;
+    }
+  
+    .logo {
+      margin-bottom: 15px;
+    }
+  
+    .nav-menu {
+      justify-content: center;
+      width: 100%;
+    }
+  
+    .menu {
+      margin: 5px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+    }
+  
+    .qr {
+      flex-direction: column;
+    }
+  
+    .codigoqr {
+      margin-right: 0;
+      margin-bottom: 15px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    main {
+      padding: 0 10px;
+      margin: 15px auto;
+      gap: 15px;
+    }
+  
+    .perfil,
+    .seguimiento,
+    .calendario {
+      padding: 15px;
+    }
+  
+    .input-box input {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+  
+    .menu {
+      width: calc(50% - 10px);
+      justify-content: center;
+      margin: 5px;
+    }
+  
+    .menu i {
+      margin-right: 5px;
+    }
+  }
+  
+  

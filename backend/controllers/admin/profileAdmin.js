@@ -2,8 +2,11 @@ const Trabajador = require("../../models/trabajador");
 const Permiso = require("../../models/permisos");
 const Asistencia = require("../../models/asistencias");
 const Falta = require("../../models/faltas");
-const Departamento = require("../../models/departamentos")
-const Cargo = require("../../models/cargos")
+const Departamento = require("../../models/departamentos");
+const Cargo = require("../../models/cargos");
+const Reporte = require("../../models/reportes");
+
+const QRCode = require("qrcode");
 
 const profileAdmin = {
 
@@ -33,22 +36,6 @@ const profileAdmin = {
     }
   },
 
-  //Obtener Lista de cargos y departamentos
-
-  async getOptions (req, res) {
-
-    try {
-      const departamentos = await Departamento.list();
-      const cargos = await Cargo.list();
-
-      res.status(200).json({departamentos, cargos})
-
-    } catch (error) {
-      console.error("Error al obtener opciones:", error);
-      res.status(400).json({message: "Error al obtener datos"});
-    }
-  },
-
   //Eliminar trabajador 
   async delete(req, res) {
 
@@ -64,7 +51,21 @@ const profileAdmin = {
       console.error("Error al eliminar trabajador:", error);
       res.status(500).json({ message: "Error al eliminar trabajador" });
     }
+  },
+
+  async generateReport(req, res) {
+    const { cedula } = req.params;
+    try {
+      const reporte = await Reporte.generarReporte(cedula);
+      res.status(200).json(reporte);
+    } catch (error) {
+      console.error("Error en reporte:", error);
+      res.status(500).json({ 
+        message: error.message || "Error al generar el reporte" 
+      });
+    }
   }
+
 };
 
 module.exports = profileAdmin;

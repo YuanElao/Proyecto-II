@@ -32,7 +32,7 @@ const getP = {
 
       //Generar código QR del trabajador
       const qrCode = await QRCode.toDataURL(trabajador.id_trabajador);
-      console.log(qrCode)
+      
       //Responder con los datos del perfil
       return res.status(200).json({
         trabajador: {
@@ -63,23 +63,40 @@ const getP = {
       const faltas = await Falta.getDates(id_trabajador);
       const permisos = await Permiso.getDates(id_trabajador); 
   
+
+
       const eventos = [
         ...asistencias.map(fecha => ({
           title: "Asistencia",
-          start: fecha,
+          start: new Date(fecha).toISOString(),
           color: "green"
         })),
         ...faltas.map(fecha => ({
           title: "Falta",
-          start: fecha,
+          start: new Date(fecha).toISOString(),
           color: "red"
         })),
-        ...permisos.map(({fecha, motivo}) => ({
+        ...permisos.flatMap(({fecha_inicio, fecha_fin, motivo}) => {
+
+          const start = new Date(fecha_inicio);
+          const end = new Date(fecha_fin);
+          const eventosPermiso = [];
+
+          for(let fecha = new Date(start); fecha <= end; fecha.setDate(fecha.getDate() + 1)) {
+
+          eventosPermiso.push({
           title: "Permiso",
-          start: fecha,
-          color: "yellow",
-          description: motivo
-        }))
+          start: new Date(fecha).toISOString(),
+  
+          color: "orange",
+          description: motivo,
+          allDay: true
+            });
+          
+        }
+      return eventosPermiso;
+    })
+      
       ];
   
       return eventos;

@@ -48,20 +48,16 @@ class Permiso {
   }
 
   static async getDates(id_trabajador){
-    const result = await pool.query("SELECT fecha_inicio, fecha_fin, motivo FROM permisos WHERE id_trabajador = $1 AND (EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE) OR EXTRACT(YEAR FROM fecha_fin) = EXTRACT(YEAR FROM CURRENT_DATE)) ORDER BY fecha_inicio", [id_trabajador]);
-    
-    const fechas = [];
-
-    result.rows.forEach(({fecha_inicio, fecha_fin}) =>{
-      let currentDate = new Date(fecha_inicio);
-      const endDate = new Date(fecha_fin);
-
-      while (currentDate <= endDate) {
-        fechas.push(currentDate.toISOString().split("T")[0]); // Formato YYYY-MM-DD
-        currentDate.setDate(currentDate.getDate() + 1); // Avanza al siguiente dia
-      }
-    });
-    return fechas;
+    const result = await pool.query(
+      `SELECT fecha_inicio, fecha_fin, motivo FROM permisos WHERE id_trabajador = $1 AND (EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE) OR EXTRACT(YEAR FROM fecha_fin) = EXTRACT(YEAR FROM CURRENT_DATE)) ORDER BY fecha_inicio`,
+      [id_trabajador]
+    );
+  
+    return result.rows.map(({ fecha_inicio, fecha_fin, motivo }) => ({
+      fecha_inicio: fecha_inicio.toISOString().split("T")[0], // Formato YYYY-MM-DD
+      fecha_fin: fecha_fin.toISOString().split("T")[0],
+      motivo,
+    }));
   }
 }
 

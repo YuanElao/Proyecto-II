@@ -5,22 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio</title>
     <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/admin/barra.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
 </head>
 <body>
     <!--Menú Superior-->
-    <header class="fondo-menu">
-        <div class="menu-container">
+    <header class="header-glass">
+        <div class="nav-container">
             <!-- Logo -->
-            <div class="logo">
-                <img src="../img/logo.png" alt="Logo" />
+            <div class="logo-hover">
+                <img src="../img/logo.png" alt="Logo" class="logo-img"/>
             </div>
-            <nav class="nav-menu">
-                <a href="#" class="menu blue here"><i class="bi bi-house-door-fill"></i>Inicio</a>
-                <a href="registrar.html" class="menu blue"><i class="bi bi-person-fill-add"></i>Registrar</a>
-                <a href="Consultar.html" class="menu blue"><i class='bx bxs-search-alt-2'></i>Consultar</a>
-                <a href="#" id="cerrarSesion" class="menu blue cerrar-sesion"><i class='bx bxs-log-out'></i>Cerrar sesión</a> <!--Hacer Funcionar el Login-->
+            
+            <nav class="nav-links">
+                <a href="index.html" class="nav-item">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="registrar.html" class="nav-item">
+                    <i class="bi bi-person-fill-add"></i>
+                    <span>Registrar</span>
+                </a>
+                <a href="Consultar.html" class="nav-item">
+                    <i class="bi bi-search"></i>
+                    <span>Consultar</span>
+                </a>
+                <a href="#" id="cerrarSesion" class="nav-item logout">
+                    <i class='bx bxs-log-out'></i>
+                    <span>Cerrar sesión</span>
+                </a>
             </nav>
         </div>
     </header>
@@ -28,18 +42,41 @@
     <main>
         <div class="contenedor-content">
             <div class="content">
-                <a href="registrar.html"><img src="../img/Registro.png" alt="Registrar" width="100px">
+                <a href="registrar.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Icono de persona -->
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                        
+                        <!-- Símbolo más (+) en esquina inferior derecha -->
+                        <g transform="translate(16 16)">
+                          <circle cx="4" cy="4" r="4" fill="#121212"/>
+                          <path d="M4 2v4M2 4h4" stroke="white" stroke-width="1.5"/>
+                        </g>
+                      </svg>
+
                     <h3>Registrar</h3>
                 </a>
             </div>
             <div class="content">
-                <a href="Consultar.html"><img src="../img/Consulta.png" alt="Consultar" width="100px">
+                <a href="Consultar.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Lupa -->
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                        
+                        <!-- Persona centrada dentro de la lupa -->
+                        <g transform="translate(5.5 5.5) scale(0.5)">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                          <circle cx="12" cy="7" r="4"/>
+                        </g>
+                      </svg>
                     <h3>Consultar</h3>
                 </a>
             </div>
         </div>
     </main>
-    <script src="../js/logout.js"></script>
+    <!-- <script src="../js/logout.js"></script>
     <script>
         window.addEventListener("load", () => {
             if(!sessionStorage.getItem("token")) {
@@ -47,6 +84,6 @@
                 window.location.href = '/frontend/views/login.html';
             }
         })
-    </script>
+    </script> -->
 </body>
 </html>

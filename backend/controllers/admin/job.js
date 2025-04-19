@@ -9,7 +9,7 @@ async list(req, res) {
     try {
 
       const cargos = await Cargo.listJob();
-      res.status(200).json(cargos.map(cargo => ({id: cargo.id_cargo, nombre: cargo.c_name, id_Dep: cargo.id_departamento})));
+      res.status(200).json(cargos.map(cargo => ({id: cargo.id_cargo, nombre: cargo.cargo, id_Dep: cargo.id_departamento, departamento: cargo.departamento})));
 
     } catch (error) {
 
@@ -61,11 +61,11 @@ async list(req, res) {
   async edit(req, res) {
 
     const { id_cargo } = req.params;
-    const { nombre, id_departamento } = req.body;
-
+    const { c_name, id_departamento } = req.body;
+    
     try {
-
-      await Cargo.editJob(id_cargo, nombre, id_departamento);
+      
+      await Cargo.editJob(id_cargo, {c_name, id_departamento});
       res.status(200).json({ message: "Cargo actualizado correctamente" });
 
     } catch (error) {

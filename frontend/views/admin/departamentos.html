@@ -20,7 +20,7 @@
                     <li><a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a></li>
                     <li><a href="Consultar.html" class="menu blue"><i class="bx bxs-search-alt-2"></i>Consulta</a></li>
                     <li><a href="permisos.html" class="menu blue"><i class="bi bi-clipboard2-check-fill"></i>Permisos</a></li>
-                    <li><a href="#" class="menu blue"><i class="bx bxs-grid-alt"></i>Secciones</a></li>
+                    <li><a href="#" class="menu blue"><i class="bx bxs-grid-alt"></i>Cuentas</a></li>
                     <li><a href="departamentos.html" class="menu blue here"><i class="bx bxs-buildings"></i>Departamentos</a></li>
                     <li><a href="#" class="menu blue cerrar-sesion"><i class="bx bxs-log-out"></i>Cerrar sesión</a></li>
                 </ul>
@@ -28,56 +28,70 @@
         </div>
     </header>
 
-    <div class="tablas">
-        <!-- Tabla Departamentos -->
-        <table id="data-table">
-            <caption>Departamentos</caption> <!-- Título para la tabla de Departamentos -->
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>PNFA</td>
-                    <td><button class="enlace">Modificar</button><button class="enlace">Eliminar</button></td>
-                </tr>
+    <main>
+        <!-- Selección de Acción -->
+        <div class="fondo2">
+            <select class="seleccionable1" id="accionSelect">
+                <option value="" disabled selected>Selecciona un Item</option>
+                <option value="departamento">Crear Departamento</option>
+                <option value="cargo">Crear Cargo</option>
+            </select>
+            <div id="formContainer"></div>
+        </div>
 
-            </tbody>
-        </table>
+        <!-- Tablas -->
+        <div class="tablas">
+            <!-- Tabla Departamentos -->
+            <table id="data-table">
+                <caption>Departamentos</caption>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
 
-    <!-- Seleccionable + boton para añadir departamento/cargo -->
-    <div class="fondo2">
-        <select class="seleccionable1" name="" id="">
-            <option value="departameto"> Crear Departamento</option>
-            <option value="cargo">Crear Cargo</option>
-        </select>
-        <button class="crear">Crear</button>
+            <!-- Tabla Cargos -->
+            <table id="data-table2">
+                <caption>Cargos</caption>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Departamento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modales -->
+    <!-- Modal Editar Departamento -->
+    <div id="modalDepartamento" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h3>Editar Departamento</h3>
+            <input type="text" id="editDepNombre" class="input-crear" placeholder="Nombre">
+            <button class="crear" id="btnGuardarDep">Guardar</button>
+        </div>
     </div>
 
-        <!-- Tabla Cargos -->
-        <table id="data-table2">
-            <caption>Cargos</caption> <!-- Título para la tabla de Cargos -->
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Departamento</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Director</td>
-                    <td>PNFA</td>
-                    <td><button class="enlace">Modificar</button><button class="enlace">Eliminar</button></td>
-                </tr>
-                
-            </tbody>
-        </table>
+    <!-- Modal Editar Cargo -->
+    <div id="modalCargo" class="modal">
+        <div class="modal-contenido">
+            <span class="cerrar">&times;</span>
+            <h3>Editar Cargo</h3>
+            <select id="editCarDepartamento" class="seleccionable1"></select>
+            <input type="text" id="editCarNombre" class="input-crear" placeholder="Nombre">
+            <button class="crear" id="btnGuardarCar">Guardar</button>
+        </div>
     </div>
     
-    
+    <script src="../../js/admin/departamentos.js"></script>
+    <script src="../../js/logout.js"></script>
 </body>
 </html>
 

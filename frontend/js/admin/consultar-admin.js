@@ -1,44 +1,74 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const token = sessionStorage.getItem('token');
     if (!token) {
-        alert('Debes iniciar sesión');
         window.location.href = '/frontend/views/login.html';
         return;
     }
 
-    // Consultar
+    // Elementos 
     const searchInput = document.getElementById('searchInput');
     const departamentoFilter = document.getElementById('departamentoFilter');
+    const cargoFilter = document.getElementById('cargoFilter');
     const tableBody = document.querySelector('#data-table tbody');
+    const departamentoSelect = document.getElementById('departamentoModal');
+    const cargoSelect = document.getElementById('cargoModal');
 
-    // Cargar departamentos
+    // Función  cargar cargos
+    const loadCargos = async (departamentoId, targetElement) => {
+        try {
+            const response = await fetch(`http://localhost:3000/admin/job/list/${departamentoId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            const cargos = await response.json();
+            targetElement.innerHTML = `
+                <option value="" disabled selected>${targetElement === cargoFilter ? 'Todos los cargos' : 'Cargo'}</option>
+                ${cargos.map(c => `<option value="${c.id_cargo}">${c.c_name}</option>`).join('')}
+            `;
+            
+            if (targetElement === cargoFilter) targetElement.disabled = false;
+        } catch (error) {
+            console.error("Error cargando cargos:", error);
+            targetElement.innerHTML = '<option value="" disabled>Error cargando cargos</option>';
+        }
+    };
+
+    // Cargar departamentos 
     const loadDepartamentos = async () => {
         try {
             const response = await fetch('http://localhost:3000/admin/department/list', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
+            
             const departamentos = await response.json();
+            const options = departamentos.map(dep => 
+                `<option value="${dep.id_departamento}">${dep.d_name}</option>`
+            ).join('');
+
+            // Para filtro
+            departamentoFilter.innerHTML = `<option value="">Todos</option>${options}`;
             
-            // Para el filtro
-            departamentoFilter.innerHTML = `<option value="">Todos</option>${
-                departamentos.map(dep => `<option value="${dep.id_departamento}">${dep.d_name}</option>`).join('')
-            }`;
-            
-            // Para el modal
-            document.getElementById('departamentoModal').innerHTML = 
-                `<option value="" disabled selected>Departamento</option>${
-                    departamentos.map(dep => `<option value="${dep.id_departamento}">${dep.d_name}</option>`).join('')
-                }`;
+            // Para modal
+            departamentoSelect.innerHTML = 
+                `<option value="" disabled selected>Departamento</option>${options}`;
             
         } catch (error) {
             console.error("Error cargando departamentos:", error);
         }
     };
+    
+    // Cargar trabajadores con todos los filtros
+    let searchTimeout;
 
-    // Cargar trabajadores
-    const loadWorkers = async (search = '', idDep = '') => {
+    const loadWorkers = async () => {
         try {
-            const response = await fetch(`http://localhost:3000/user/consult/worker?search=${search}&departamento=${idDep}`, {
+            const params = new URLSearchParams({
+                search: searchInput.value,
+                departamento: departamentoFilter.value,
+                cargo: cargoFilter.value
+            });
+
+            const response = await fetch(`http://localhost:3000/user/consult/worker?${params}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -57,29 +87,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    // Eventos de búsqueda
-    searchInput.addEventListener('input', (e) => loadWorkers(e.target.value, departamentoFilter.value));
-    departamentoFilter.addEventListener('change', (e) => loadWorkers(searchInput.value, e.target.value));
-
-    // Registro
-    const departamentoSelect = document.getElementById('departamentoModal');
-    const cargoSelect = document.getElementById('cargoModal');
-
-    // Cargar cargos al seleccionar departamento
-    departamentoSelect.addEventListener('change', async (e) => {
-        try {
-            const response = await fetch(`http://localhost:3000/admin/job/list/${e.target.value}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            
-            const cargos = await response.json();
-            cargoSelect.innerHTML = `<option value="" disabled selected>Cargo</option>${
-                cargos.map(c => `<option value="${c.id_cargo}">${c.c_name}</option>`).join('')
-            }`;
-        } catch (error) {
-            console.error("Error cargando cargos:", error);
+    // Eventos comunes para filtros
+    const handleDepartamentoChange = async (e, isFilter = true) => {
+        const target = isFilter ? cargoFilter : cargoSelect;
+        if (e.target.value) {
+            await loadCargos(e.target.value, target);
+        } else {
+            target.innerHTML = `<option value="" ${isFilter ? 'selected' : 'disabled'}>${
+                isFilter ? 'Todos los cargos' : 'Cargo'
+            }</option>`;
+            if (isFilter) target.disabled = true;
         }
+        if (isFilter) await loadWorkers();
+    };
+
+    // Configurar eventos
+    departamentoFilter.addEventListener('change', (e) => handleDepartamentoChange(e, true));
+    departamentoSelect.addEventListener('change', (e) => handleDepartamentoChange(e, false));
+    
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(async () => {
+            await loadWorkers()
+        }, 1000);
     });
+    
+    cargoFilter.addEventListener('change', loadWorkers);
 
     //Enviar formulario
     document.getElementById('registroForm').addEventListener('submit', async (e) => {
@@ -148,6 +181,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Inicializar
+    cargoFilter.disabled = true;
     await loadDepartamentos();
     await loadWorkers();
 
