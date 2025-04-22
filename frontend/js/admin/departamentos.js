@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('btnGuardarCar').addEventListener('click', async () => {
         const nuevoNombre = document.getElementById('editCarNombre').value;
-        const nuevoDep = document.getElementById('editCarDepartamento').value;
+        const Dep = document.getElementById('editCarDepartamento').value;
         
         try {
             const response = await fetch(`http://localhost:3000/admin/job/${currentEditId}`, {
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 },
                 body: JSON.stringify({ 
                     c_name: nuevoNombre,
-                    id_departamento: nuevoDep 
+                    id_departamento: Dep 
                 })
             });
 

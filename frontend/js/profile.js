@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const token = sessionStorage.getItem('token')
         // Obtener datos del trabajador
-        console.log("Este es el token:", token)
+        
         const response = await fetch(`http://localhost:3000/user/profile/${cedula}`, {
             headers: {
                 'Authorization': `Bearer ${token}`

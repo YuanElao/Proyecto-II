@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="../../css/admin/barra.css">
+    <link rel="stylesheet" href="../../css/admin/perfilAdmin.css">
+    <link rel="stylesheet" href="../../css/admin/calendarioAdmin.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+</head>
+<body>
+    <!--Menú Superior-->
+    <header class="fondo-menu">
+        <div class="menu-container">
+            <div class="logo">
+                <img src="../../img/logo.png" alt="Logo" />
+            </div>
+            <nav class="nav-menu">
+                <ul class="menu-horizontal">
+                    <li><a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a></li>
+                    <li><a href="Consultar.html" class="menu blue"><i class="bx bxs-search-alt-2"></i>Consulta</a></li>
+                    <li><a href="permisos.html" class="menu blue"><i class="bi bi-clipboard2-check-fill"></i>Permisos</a></li>
+                    <li><a href="#" class="menu blue"><i class="bx bxs-grid-alt"></i>Cuentas</a></li>
+                    <li><a href="departamentos.html" class="menu blue here"><i class="bx bxs-buildings"></i>Departamentos</a></li>
+                    <li><a href="#" class="menu blue cerrar-sesion"><i class="bx bxs-log-out"></i>Cerrar sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="perfil">
+            <div class="datos">
+                <!-- <h2>Perfil</h2> -->
+                <div class="info">
+                        <div class="input-box">
+                            <label for="nombre">Nombre: </label>
+                            <input type="text" id="nombre" value="">
+                        </div>
+                        <div class="input-box">
+                            <label for="apellido"> Apellido: </label>
+                            <input type="text" id="apellido" value="">
+                        </div>
+                        <div class="input-box">
+                            <label for="cedula">Cedula: </label>
+                            <input type="number" id="cedula" value="">
+                        </div>
+                </div>
+            </div>
+
+            <div class="datos">
+                <div class="input-box right">
+                    <label for="departamentoSelect">Departamento:</label>
+                    <select id="departamentoSelect" class="form-control"></select>
+                </div>
+                <div class="input-box right">
+                    <label for="cargoSelect">Cargo:</label>
+                    <select id="cargoSelect" class="form-control" disabled></select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+
+        <button id="btnEditar" class="btn-editar">Editar</button>
+        <button id="btnGuardar" class="btn-guardar" style="display:none;">Guardar</button>
+        <button id="btnCancelar" class="btn-cancelar" style="display:none;">Cancelar</button>
+        </div>
+
+        <div class="seguimiento">
+            <ul>
+                <li class="asistencias" id="countA">Asistencias:</li>
+                <li class="permisos" id="countP">Permisos:</li>
+                <li class="faltas" id="countF">Faltas:</li>
+            </ul>
+            <div class="qr">
+                <img src="../../img/QR.png" alt="Código QR" class="codigoqr">
+                <input type="submit" id="qr" value="Imprimir" class="btn-imprimir">
+            </div>
+        </div> 
+        <div class="calendario">
+            <h2>Calendario</h2>
+            <div id="calendarContainer"></div>
+        </div>
+    </main>
+
+    <script src="../../js/admin/profileAdmin.js"></script>
+    <script src="../../js/logout.js"></script>
+    
+</body>
+</html>

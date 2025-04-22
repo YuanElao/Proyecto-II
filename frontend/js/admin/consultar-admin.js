@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ).join('');
 
             // Para filtro
-            departamentoFilter.innerHTML = `<option value="">Todos</option>${options}`;
+            departamentoFilter.innerHTML = `<option value="">Todos los departamentos</option>${options}`;
             
             // Para modal
             departamentoSelect.innerHTML = 
@@ -82,6 +82,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td>${t.cargo}</td>
                 </tr>`
             ).join('');
+
+        document.getElementById('data-table').addEventListener('click', (e) => {
+        const fila = e.target.closest('tr');
+        if (!fila || fila.parentNode.tagName !== 'TBODY') return;
+
+        const cedula = fila.cells[2].textContent.trim();
+        
+        // Guardar la cédula en localStorage
+        localStorage.setItem('cedulaActual', cedula);
+        
+        // Redirigir sin parámetros en la URL
+        window.location.href = 'perfilAdmin.html'; 
+    });
         } catch (error) {
             console.error("Error cargando trabajadores:", error);
         }

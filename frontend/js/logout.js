@@ -1,24 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    let isNavigation = false;
+
     window.addEventListener("popstate", () => {
         sessionStorage.removeItem("token");
         window.location.href = '/frontend/views/login.html';
     });
 
-    let isReload = false;
+    
 
-    window.addEventListener("beforeunload", () => {
-        if (!isReload) {
-            sessionStorage.removeItem("token");
-            window.location.href = '/frontend/views/login.html';
-        }
-    });
-
+    // Detectar clics en enlaces internos
     document.addEventListener("click", (e) => {
-        if (e.target.tagName === "A") {
-            isReload = true ;
+        const link = e.target.closest('a');
+        if (link && link.href && !link.href.includes('logout')) {
+            isNavigation = true;
         }
-    });
+    })
 
 
 
