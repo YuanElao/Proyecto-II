@@ -35,7 +35,7 @@ const account = {
 
     async update(req, res) {
         const { c_id } = req.params;
-        const { c_name, c_password, c_rol, c_root } = req.body;
+        const { c_name, c_password, c_rol } = req.body;
 
         try {
             const cuenta = await Cuenta.getAccount(c_id);
@@ -50,7 +50,6 @@ const account = {
             cuenta.c_name = c_name || cuenta.c_name;
             cuenta.c_password = c_password || cuenta.c_password;
             cuenta.c_rol = c_rol || cuenta.c_rol;
-            cuenta.c_root = c_root !== undefined ? c_root : cuenta.c_root;
 
             await cuenta.updateAccount();
             res.status(200).json({ message: "Cuenta actualizada" });

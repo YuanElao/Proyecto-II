@@ -37,7 +37,7 @@ class Cuenta {
         const exists = await pool.query("SELECT c_id FROM login WHERE c_name = $1 AND c_id != $2",[this.c_name, this.c_id]);
         if (exists.rows.length > 0) throw new Error("Nombre de usuario en uso");
 
-        await pool.query("UPDATE login SET c_name = $1, c_password = $2, c_rol = $3, c_root = $4 WHERE c_id = $5",[this.c_name, this.c_password, this.c_rol, this.c_root, this.c_id]);
+        await pool.query("UPDATE login SET c_name = $1, c_password = $2, c_rol = $3 WHERE c_id = $4",[this.c_name, this.c_password, this.c_rol, this.c_id]);
     }
 
     // ELIMINAR CUENTA
@@ -56,7 +56,7 @@ class Cuenta {
 
     // Listar Cuentas
     static async listAccounts(isRoot) {
-        let query = `SELECT c_id, c_name, c_rol, c_root FROM login `;
+        let query = `SELECT c_id, c_name, c_password, c_rol, c_root FROM login `;
 
         if (isRoot) {
 

@@ -39,6 +39,8 @@ const getP = {
           nombre: trabajador.t_name,
           apellido: trabajador.t_apellido,
           cedula: trabajador.t_cedula,
+          id_departamento: trabajador.id_departamento,
+          id_cargo: trabajador.id_cargo,
           departamento: trabajador.departamento,
           cargo: trabajador.cargo,
           qr_code: qrCode,

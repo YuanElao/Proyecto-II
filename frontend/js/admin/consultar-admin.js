@@ -192,7 +192,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert(`Error: ${error.message}`);
         }
     });
+    const popup = document.getElementById('popup');
+const btnRegistrar = document.querySelector('[popovertarget="popup"]');
 
+// Mostrar modal
+btnRegistrar.addEventListener('click', () => {
+    popup.style.display = 'block';
+});
+
+// Ocultar modal
+document.getElementById('cerrarPopup').addEventListener('click', () => {
+    popup.style.display = 'none';
+});
+
+// Ocultar al enviar el formulario
+document.getElementById('registroForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // ... resto del código
+    popup.style.display = 'none';
+});
+
+// Cerrar al hacer clic fuera del modal
+window.addEventListener('click', (e) => {
+    if (e.target === popup) {
+        popup.style.display = 'none';
+    }
+});
     // Inicializar
     cargoFilter.disabled = true;
     await loadDepartamentos();

@@ -11,7 +11,7 @@ router.put("/account/user/update/:c_id", authenticateJWT("admin", 0), account.up
 router.delete("/account/user/delete/:c_id", authenticateJWT("admin", 0), account.delete);
 
 router.post("/account/admin/add", authenticateJWT("admin", 1), account.register);
-router.put("/account/update/:c_id", authenticateJWT("admin", 1), account.update);
-router.delete("/account/delete/:c_id", authenticateJWT("admin", 1), account.delete);
+router.put("/account/admin/update/:c_id", authenticateJWT("admin", 1), account.update);
+router.delete("/account/admin/delete/:c_id", authenticateJWT("admin", 1), account.delete);
 
 module.exports = router ;

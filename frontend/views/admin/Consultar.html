@@ -20,8 +20,8 @@
                     <li><a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a></li>
                     <li><a href="Consultar.html" class="menu blue here"><i class="bx bxs-search-alt-2"></i>Consulta</a></li>
                     <li><a href="permisos.html" class="menu blue"><i class="bi bi-clipboard2-check-fill"></i>Permisos</a></li>
-                    <li><a href="#" class="menu blue"><i class="bx bxs-grid-alt"></i>Cuentas</a></li>
-                    <li><a href="#" class="menu blue"><i class="bx bxs-buildings"></i>Departamentos</a></li>
+                    <li><a href="cuentas.html" class="menu blue"><i class="bx bxs-grid-alt"></i>Cuentas</a></li>
+                    <li><a href="departamentos.html" class="menu blue"><i class="bx bxs-buildings"></i>Departamentos</a></li>
                     <li><a href="#" id="cerrarSesion" class="menu blue cerrar-sesion"><i class="bx bxs-log-out"></i>Cerrar sesión</a></li>
                 </ul>
             </nav>
@@ -71,9 +71,9 @@
     </main>
     
 <!--Diseño de la ventana emergente-->
-<div popover id="popup" class="popup">
+<div id="popup" class="popup" style="display: none;">
 <div class="fondo2">
-    <button popovertarget="popup" popovertargetaction="hide" class="cerrar">X</button>
+    <button class="cerrar" id="cerrarPopup">X</button>
     <form action="" id="registroForm">
         <h1>Registro</h1>
 

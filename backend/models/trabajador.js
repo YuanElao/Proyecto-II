@@ -84,7 +84,7 @@ class Trabajador {
       if (search) {
           query += `
               AND (
-                  LOWER(t.t_cedula) LIKE LOWER($${params.length + 1}) 
+                  t.t_cedula LIKE $${params.length + 1} 
                   OR LOWER(t.t_name) LIKE LOWER($${params.length + 1}) 
                   OR LOWER(t.t_apellido) LIKE LOWER($${params.length + 1})
               )
@@ -113,7 +113,7 @@ class Trabajador {
     //Obtener Trabajador por Cedula
 
     static async obtainByCi(cedula) {
-        const result = await pool.query(`SELECT t.id_trabajador, t.t_name, t.t_apellido, t.t_cedula, 
+        const result = await pool.query(`SELECT t.id_trabajador, t.t_name, t.t_apellido, t.t_cedula, t.id_departamento, t.id_cargo, 
               COALESCE(d.d_name, 'Sin asignar') AS departamento, 
               COALESCE(c.c_name, 'Sin asignar') AS cargo
        FROM trabajadores t
@@ -134,7 +134,7 @@ class Trabajador {
     throw new Error("Trabajador no encontrado.");
   }
 
-  const formatText = (texto) => texto ? texto.trim().charAt(0).toUpperCase() + texto.slice(1).toLowerCase() : null;
+  const formatText = (texto) => texto ? texto.trim().charAt(0).toUpperCase() + texto.slice(1).toLowerCase() : null; //operador ternario
   const cleanCi = (cedula) => cedula ? cedula.replace(/\D/g, "") : null;
 
   const nombreFinal = formatText(nombre) || worker.rows[0].t_name;
@@ -170,8 +170,8 @@ class Trabajador {
 
     //Eliminar un Trabajador
 
-    async deleteWorker () {
-        await pool.query("DELETE FROM trabajadores WHERE t_cedula = $1", [this.tcedula]);
+    static async deleteWorker (cedula) {
+        await pool.query("DELETE FROM trabajadores WHERE t_cedula = $1", [cedula]);
     }
 }
 
