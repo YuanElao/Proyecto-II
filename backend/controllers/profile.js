@@ -36,6 +36,7 @@ const getP = {
       //Responder con los datos del perfil
       return res.status(200).json({
         trabajador: {
+          id_trabajador: trabajador.id_trabajador,
           nombre: trabajador.t_name,
           apellido: trabajador.t_apellido,
           cedula: trabajador.t_cedula,
@@ -68,39 +69,44 @@ const getP = {
 
 
       const eventos = [
-        ...asistencias.map(fecha => ({
+        ...asistencias.map(asistencia => ({
+          id: asistencia.id,
           title: "Asistencia",
-          start: new Date(fecha).toISOString(),
+          start: new Date(asistencia.fecha).toISOString(),
           color: "green"
         })),
-        ...faltas.map(fecha => ({
+        ...faltas.map(falta => ({
+          id: falta.id,
           title: "Falta",
-          start: new Date(fecha).toISOString(),
+          start: new Date(falta.fecha).toISOString(),
           color: "red"
         })),
-        ...permisos.flatMap(({fecha_inicio, fecha_fin, motivo}) => {
-
-          const start = new Date(fecha_inicio);
-          const end = new Date(fecha_fin);
-          const eventosPermiso = [];
-
-          for(let fecha = new Date(start); fecha <= end; fecha.setDate(fecha.getDate() + 1)) {
-
-          eventosPermiso.push({
-          title: "Permiso",
-          start: new Date(fecha).toISOString(),
-  
-          color: "orange",
-          description: motivo,
-          allDay: true
-            });
-          
+      ...permisos.flatMap(permiso => {
+        const startDate = new Date(permiso.start);
+        const endDate = new Date(permiso.end);
+        const days = [];
+        
+        // Generar un evento por cada día del permiso
+        for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+          days.push({
+            id: permiso.id,
+            title: "Permiso",
+            start: new Date(d).toISOString().split('T')[0] + "T00:00:00",
+            color: "orange",
+            description: permiso.motivo,
+            allDay: true,
+            extendedProps: {
+              esPermiso: true,
+              fechaInicio: permiso.start,
+              fechaFin: permiso.end
+            }
+          });
         }
-      return eventosPermiso;
-    })
-      
-      ];
-  
+        return days;
+      })
+    ];
+    
+    
       return eventos;
     } catch (error) {
       console.error("Error al obtener calendario:", error);

@@ -34,9 +34,36 @@ class Asistencia {
     }
 
     static async getDates(id_trabajador) {
-        const result = await pool.query("SELECT TO_CHAR(fecha, 'YYYY-MM-DD') AS fecha FROM asistencias WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) ORDER BY fecha", [id_trabajador]);
-        return result.rows.map(row => row.fecha);
+        const result = await pool.query("SELECT id_a, fecha FROM asistencias WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) ORDER BY fecha", [id_trabajador]);
+        return result.rows.map(row => ({
+        id: row.id_a,
+        fecha: row.fecha.toISOString().split('T')[0],
+        
+    }));
     }
+
+    static async create(id_trabajador, fecha) {
+
+        const asistencia = new Asistencia(id_trabajador);
+
+        const validation = await asistencia.validationA();
+        if (!validation.valido) {
+            throw new Error(validation.message);
+        }
+
+        await pool.query("INSERT INTO asistencias (id_trabajador, fecha, hora) VALUES ($1, $2, CURRENT_TIME)", [id_trabajador, fecha]);
+
+        return { message: "Asistencia creada correctamente"}
+    }
+
+    static async delete(id_a) {
+    await pool.query(
+      "DELETE FROM asistencias WHERE id_a = $1",
+      [id_a]
+    );
+  }
+
 }
+
 
 module.exports = Asistencia

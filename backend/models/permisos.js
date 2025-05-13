@@ -49,16 +49,33 @@ class Permiso {
 
   static async getDates(id_trabajador){
     const result = await pool.query(
-      `SELECT fecha_inicio, fecha_fin, motivo FROM permisos WHERE id_trabajador = $1 AND (EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE) OR EXTRACT(YEAR FROM fecha_fin) = EXTRACT(YEAR FROM CURRENT_DATE)) ORDER BY fecha_inicio`,
+      `SELECT id_p, fecha_inicio, fecha_fin, motivo FROM permisos WHERE id_trabajador = $1 AND (EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE) OR EXTRACT(YEAR FROM fecha_fin) = EXTRACT(YEAR FROM CURRENT_DATE)) ORDER BY fecha_inicio`,
       [id_trabajador]
     );
   
-    return result.rows.map(({ fecha_inicio, fecha_fin, motivo }) => ({
-      fecha_inicio: fecha_inicio.toISOString().split("T")[0], // Formato YYYY-MM-DD
-      fecha_fin: fecha_fin.toISOString().split("T")[0],
-      motivo,
+    return result.rows.map(row => ({
+      id: row.id_p,
+      start: row.fecha_inicio.toISOString().split('T')[0],
+      end: row.fecha_fin.toISOString().split('T')[0],
+      motivo: row.motivo
     }));
   }
+
+      static async update(id_p, motivo) {
+        try {
+          await pool.query("UPDATE permisos SET motivo = $1 WHERE id_p = 2", [motivo, id_p]);
+          
+        }catch (error) {
+          throw error;
+        }
+      }
+
+      static async delete(id_p) {
+      await pool.query(
+        "DELETE FROM permisos WHERE id_p = $1",
+        [id_p]
+      );
+    }
 }
 
 

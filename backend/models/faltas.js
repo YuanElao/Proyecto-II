@@ -42,9 +42,35 @@ class Falta {
   }
     
   static async getDates(id_trabajador) {
-    const result = await pool.query("SELECT TO_CHAR(fecha, 'YYYY-MM-DD') AS fecha FROM faltas WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) ORDER BY fecha", [id_trabajador]);
-    return result.rows.map(row => row.fecha);
+    const result = await pool.query("SELECT id_f, fecha FROM faltas WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha) = EXTRACT(YEAR FROM CURRENT_DATE) ORDER BY fecha", [id_trabajador]);
+    return result.rows.map(row => ({
+      id: row.id_f,
+      fecha: row.fecha.toISOString().split('T')[0],
+      
+    }));
   }
+
+static async create(id_trabajador, fecha) {
+
+        const falta = new Falta(id_trabajador);
+
+        const validation = await falta.validationF();
+        if (!validation.valido) {
+            throw new Error(validation.message);
+        }
+
+        await pool.query("INSERT INTO faltas (id_trabajador, fecha) VALUES ($1, $2)", [id_trabajador, fecha]);
+
+        return { message: "Falta creada correctamente"}
+    }
+
+    static async delete(id_f) {
+    await pool.query(
+      "DELETE FROM faltas WHERE id_f = $1",
+      [id_f]
+    );
+  }
+
 }
 
 

@@ -89,107 +89,65 @@
         </div>
     </main>
 
- <!-- Modal Registrar Evento -->
-<dialog id="modalRegistrar">
-    <div class="modal-header">
-        <h3 style="margin: 0">Registrar evento</h3>
-        <button class="modal-close" onclick="document.getElementById('modalRegistrar').close()">&times;</button>
-    </div>
-    <div class="modal-content">
-        <div class="input-group">
-            <label>Tipo de evento</label>
-            <select id="tipoEvento" class="custom-select">
-                <option value="asistencia">Asistencia</option>
-                <option value="falta">Falta</option>
-                <option value="permiso">Permiso</option>
-            </select>
-        </div>
-
-        <div id="camposPermiso" class="campos-permiso"></div>
-
-        <div id="camposPermiso">
-            <div class="input-row">
+    <!-- Popup para registrar evento -->
+    <div class="popup-overlay" id="popupRegistrar">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3 class="popup-title">Registrar evento</h3>
+                <button class="popup-close">&times;</button>
+            </div>
+            <div class="popup-body">
                 <div class="input-group">
-                    <label>Fecha inicio</label>
-                    <input type="date" id="fechaInicioPermiso" disabled>
+                    <label>Tipo de evento</label>
+                    <select id="tipoEvento" class="custom-select">
+                        <option value="asistencia">Asistencia</option>
+                        <option value="falta">Falta</option>
+                        <option value="permiso">Permiso</option>
+                    </select>
                 </div>
-                <div class="input-group">
-                    <label>Fecha fin</label>
-                    <input type="date" id="fechaFinPermiso" min="">
+
+                <div id="camposPermiso" style="display: none;">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Fecha inicio</label>
+                            <input type="date" id="fechaInicioPermiso" disabled>
+                        </div>
+                        <div class="input-group">
+                            <label>Fecha fin</label>
+                            <input type="date" id="fechaFinPermiso" min="">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Motivo</label>
+                        <input type="text" id="motivoPermiso" placeholder="Motivo del permiso" maxlength="256">
+                        <div class="contador-caracteres">
+                            <span id="contadorPermiso">0/256</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="input-group">
-                <label>Motivo</label>
-                <textarea id="motivoPermiso" placeholder="Descripción del permiso"></textarea>
+            <div class="popup-footer">
+                <button class="btn-secondary" id="btnCancelarRegistro">Cancelar</button>
+                <button class="btn-primary" id="btnRegistrarEvento">Registrar</button>
             </div>
         </div>
-
-        <div class="modal-actions">
-            <button class="btn-secondary" onclick="document.getElementById('modalRegistrar').close()">Cancelar</button>
-            <button class="btn-primary" id="btnRegistrarEvento">Registrar</button>
-        </div>
     </div>
-</dialog>
 
-<!-- Modal Registrar Evento -->
-<dialog id="modalRegistrar">
-    <div class="modal-header">
-        <h3 style="margin: 0">Registrar evento</h3>
-        <button class="modal-close" onclick="document.getElementById('modalRegistrar').close()">&times;</button>
-    </div>
-    <div class="modal-content">
-        <div class="input-group">
-            <label>Tipo de evento</label>
-            <select id="tipoEvento" class="custom-select">
-                <option value="asistencia">Asistencia</option>
-                <option value="falta">Falta</option>
-                <option value="permiso">Permiso</option>
-            </select>
-        </div>
-
-        <div id="camposPermiso" style="display: none;">
-            <div class="input-row">
-                <div class="input-group">
-                    <label>Fecha inicio</label>
-                    <input type="date" id="fechaInicioPermiso" disabled>
-                </div>
-                <div class="input-group">
-                    <label>Fecha fin</label>
-                    <input type="date" id="fechaFinPermiso" min="">
-                </div>
+    <!-- Popup para editar evento -->
+    <div class="popup-overlay" id="popupEditar">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h3 class="popup-title" id="tituloEvento"></h3>
+                <button class="popup-close">&times;</button>
             </div>
-            <div class="input-group">
-                <label>Motivo</label>
-                <input type="text" id="motivoPermiso" placeholder="Motivo del permiso" maxlength="256">
-                <div class="contador-caracteres">
-                    <span id="contadorPermiso">0/256</span>
-                </div>
+            <div class="popup-body" id="detallesEvento"></div>
+            <div class="popup-footer">
+                <button class="btn-danger" id="btnEliminarEvento">Eliminar</button>
+                <button class="btn-primary" id="btnEditarPermiso" style="display: none;">Editar</button>
+                <button class="btn-primary" id="btnGuardarPermiso" style="display: none;">Guardar</button>
             </div>
         </div>
-
-        <div class="modal-actions">
-            <button class="btn-secondary" onclick="document.getElementById('modalRegistrar').close()">Cancelar</button>
-            <button class="btn-primary" id="btnRegistrarEvento">Registrar</button>
-        </div>
     </div>
-</dialog>
-
-<!-- Modal Ver/Editar Evento -->
-<dialog id="modalEditar">
-    <div class="modal-header">
-        <h3 style="margin: 0" id="tituloEvento"></h3>
-        <button class="modal-close" id="btnCerrarModalEditar">&times;</button>
-    </div>
-    <div class="modal-content">
-        <div id="detallesEvento"></div>
-        
-        <div class="modal-actions">
-            <button class="btn-danger" id="btnEliminarEvento">Eliminar</button>
-            <button class="btn-primary" id="btnEditarPermiso" style="display: none;">Editar</button>
-            <button class="btn-primary" id="btnGuardarPermiso" style="display: none;">Guardar</button>
-        </div>
-    </div>
-</dialog>
 
     <script src="../../js/admin/profileAdmin.js"></script>
     <script src="../../js/logout.js"></script>
