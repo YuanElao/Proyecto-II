@@ -87,6 +87,46 @@
             <h2>Calendario</h2>
             <div id="calendarContainer"></div>
         </div>
+
+        <!-- Sección de Reportes -->
+<div class="reportes">
+    <h2>Reportes</h2>
+    <div class="reporte-form">
+        <div class="input-group">
+            <label for="tipoReporte">Tipo de Reporte:</label>
+            <select id="tipoReporte" class="custom-select">
+                <option value="datos">Reporte de Trabajador</option>
+                <option value="record">Record Laboral</option>
+            </select>
+        </div>
+
+        <div id="recordOptions" style="display: none;">
+            <div class="input-group">
+                <label for="tipoRecord">Tipo de Record:</label>
+                <select id="tipoRecord" class="custom-select">
+                    <option value="general">General</option>
+                    <option value="asistencias">Asistencias</option>
+                    <option value="faltas">Faltas</option>
+                    <option value="permisos">Permisos</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="anioRecord">Año:</label>
+                <select id="anioRecord" class="custom-select">
+                    <!-- Se llenará dinámicamente con JavaScript -->
+                </select>
+            </div>
+
+        
+        </div>
+
+        <button id="btnGenerarReporte" class="btn-primary">Generar Reporte</button>
+
+        <div class = 'reporte-resultados'><div id='reportContainer'></div>
+    </div>
+</div>
+
     </main>
 
     <!-- Popup para registrar evento -->
@@ -150,6 +190,7 @@
     </div>
 
     <script src="../../js/admin/profileAdmin.js"></script>
+    <script src="../../js/admin/reportes.js"></script>
     <script src="../../js/logout.js"></script>
     
 </body>

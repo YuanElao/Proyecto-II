@@ -450,6 +450,59 @@ button:active {
     background-color: #f0f7ff;
   }
   
+/* =========== SECCIÓN DE REPORTES =========== */
+.reportes {
+    grid-area: reportes;
+    background: transparent;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid white;
+    background-image: linear-gradient(transparent, #2a4a7f);
+    margin-top: 20px;
+}
+
+.reportes:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.reporte-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.reporte-form .input-group {
+    margin-bottom: 10px;
+}
+
+#btnGenerarReporte {
+    padding: 12px 25px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+}
+
+#btnGenerarReporte:hover {
+    background-color: #1e7e34;
+    transform: translateY(-2px);
+}
+
+/* Ajusta el grid principal para incluir la nueva sección */
+main {
+    grid-template-areas:
+      "perfil seguimiento"
+      "calendario calendario"
+      "reportes reportes";
+}
+
   /* =========== MEDIA QUERIES =========== */
   @media (max-width: 992px) {
     main {

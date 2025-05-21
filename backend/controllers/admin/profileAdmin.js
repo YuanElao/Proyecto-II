@@ -4,7 +4,7 @@ const Asistencia = require("../../models/asistencias");
 const Falta = require("../../models/faltas");
 const Departamento = require("../../models/departamentos");
 const Cargo = require("../../models/cargos");
-const Reporte = require("../../models/reportes");
+
 
 const QRCode = require("qrcode");
 
@@ -173,18 +173,7 @@ async createF(req, res) {
     }
   },
 
-  async generateReport(req, res) {
-    const { cedula } = req.params;
-    try {
-      const reporte = await Reporte.generarReporte(cedula);
-      res.status(200).json(reporte);
-    } catch (error) {
-      console.error("Error en reporte:", error);
-      res.status(500).json({ 
-        message: error.message || "Error al generar el reporte" 
-      });
-    }
-  }
+  
 
 };
 

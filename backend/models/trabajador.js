@@ -113,7 +113,7 @@ class Trabajador {
     //Obtener Trabajador por Cedula
 
     static async obtainByCi(cedula) {
-        const result = await pool.query(`SELECT t.id_trabajador, t.t_name, t.t_apellido, t.t_cedula, t.id_departamento, t.id_cargo, 
+        const result = await pool.query(`SELECT t.id_trabajador, t.t_name, t.t_apellido, t.t_cedula, t.id_departamento, t.id_cargo, t.fecha_registro, 
               COALESCE(d.d_name, 'Sin asignar') AS departamento, 
               COALESCE(c.c_name, 'Sin asignar') AS cargo
        FROM trabajadores t

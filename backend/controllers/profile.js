@@ -44,6 +44,7 @@ const getP = {
           id_cargo: trabajador.id_cargo,
           departamento: trabajador.departamento,
           cargo: trabajador.cargo,
+          fecha_registro: trabajador.fecha_registro,
           qr_code: qrCode,
         },
         contadores: {

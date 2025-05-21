@@ -64,12 +64,14 @@ app.use("/app", require("./routes/qrAssist.routes"));
 
 //Admin
 
+
 app.use("/admin", require("./routes/admin/permissions.routes"));
 app.use("/admin", require("./routes/admin/profileAdmin.routes"));
 app.use("/admin", require("./routes/admin/job.routes.js"));
 app.use("/admin", require("./routes/admin/department.routes.js"));
 app.use("/admin", require("./routes/faults.routes"));
 app.use("/admin", require("./routes/admin/accounts.routes.js"));
+app.use("/admin", require("./routes/admin/report.routes.js"))
 
 //Ajustes
 

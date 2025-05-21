@@ -18,6 +18,5 @@ router.delete("/permission/delete", authenticateJWT('admin'),profileAdmin.delete
 
 router.put("/permission/update", authenticateJWT('admin'),profileAdmin.updateP);
 
-router.get("/profile/reporte/:cedula", authenticateJWT('admin'),profileAdmin.generateReport)
 
 module.exports = router;

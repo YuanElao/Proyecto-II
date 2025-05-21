@@ -7,14 +7,14 @@ const account = {
     async register(req, res) {
         const { c_name, c_password, c_rol, c_root = 0 } = req.body;
         const isRootAdmin = req.user?.root === 1;
+        const isAdmin = req.user?.role === 'admin';
 
         try {
-
-
-            // Validar permisos
-            if (!isRootAdmin && (c_rol === 'admin' || c_root === 1)) {
-                throw new Error("Acceso denegado");
+            if (!isRootAdmin && (c_rol === "admin" || c_root === 1)) {
+                throw new Error ("Acceso denegado")
             }
+
+
 
             // Validar Campos Vacios
 
@@ -42,7 +42,7 @@ const account = {
             const isRootAdmin = req.user?.root === 1;
 
             // Validar permisos
-            if (!isRootAdmin && cuenta.c_rol === 'admin') {
+            if (!isRootAdmin && (cuenta.c_rol === 'admin' || c_rol === "admin" || c_root === 1)) {
                 throw new Error("No puedes asignar este rol");
             }
 
