@@ -23,7 +23,7 @@ class Reporte {
         UNION ALL
         SELECT id_f, 'Falta', fecha, NULL, NULL, 'falta' FROM faltas WHERE id_trabajador = $1
         UNION ALL
-        SELECT id_p, 'Permiso', fecha_inicio, NULL, motivo, 'permiso' FROM permisos WHERE id_trabajador = $1
+        SELECT id_p, 'Permiso', generate_series(fecha_inicio, fecha_fin, '1 day'::interval)::date as start, NULL, motivo, 'permiso' FROM permisos WHERE id_trabajador = $1
       )
       SELECT * FROM eventos WHERE 1=1`;
     

@@ -353,8 +353,13 @@ function generateCalendarHTML(anio, eventos) {
                     estiloDia = 'color: #ffc107;'; // Amarillo
                 }
                 
-                // Tooltip
-                tooltip = `title="${evento.tipo}${evento.hora ? ' - Hora: ' + evento.hora : ''}${evento.motivo ? ' - Motivo: ' + evento.motivo : ''}"`;
+                // Tooltip mejorado para permisos
+                if (evento.tipo === 'Permiso') {
+                    const permiso = eventos.find(e => e.id === evento.id && e.motivo);
+                    tooltip = `title="Permiso: ${permiso?.motivo || 'Sin motivo especificado'}"`;
+                } else {
+                    tooltip = `title="${evento.tipo}${evento.hora ? ' - Hora: ' + evento.hora : ''}"`;
+                }
             }
             
             diasHTML += `<div class="${claseDia}" style="${estiloDia}" ${tooltip}>${i}</div>`;
@@ -372,12 +377,4 @@ function generateCalendarHTML(anio, eventos) {
     }).join('');
 }
 
-
-    function addPrintButton() {
-        const btnImprimir = document.createElement('button');
-        btnImprimir.textContent = 'Imprimir Reporte';
-        btnImprimir.className = 'btn-imprimir';
-        btnImprimir.addEventListener('click', () => window.print());
-        reportContainer.appendChild(btnImprimir);
-    }
 });
