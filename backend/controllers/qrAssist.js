@@ -1,6 +1,33 @@
 const Asistencia = require ("../models/asistencias");
 
+const clients = new Set();
+
+function notifyClients(message) {
+      clients.forEach((client) => {
+      client.write(`data: ${JSON.stringify(message)}\n\n`);
+      });
+
+}
+
 const qrAssistRe = {
+
+sseHandler(req, res) {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    });
+    
+    clients.add(res);
+    
+    req.on('close', () => {
+      clients.delete(res);
+    });
+  },
+
+
+
+
 
   async register(req, res) {
 
@@ -22,8 +49,10 @@ const qrAssistRe = {
     }
 
     await asistencia.reAttendance();
-
+    notifyClients({message: 'Un trabajador ha registrado su asistencia'});
     console.log('Asistencia registrada exitosamente')
+
+
 
     res.status(201).json({ message: "Asistencia registrada exitosamente"});
 

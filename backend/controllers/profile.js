@@ -78,7 +78,7 @@ const getP = {
         })),
         ...faltas.map(falta => ({
           id: falta.id,
-          title: "Falta",
+          title: "Falta",                               //genera y concatena arrays de objetos, flatmap aplana todos los arrays de days en un unico array permiso resultante
           start: new Date(falta.fecha).toISOString(),
           color: "red"
         })),

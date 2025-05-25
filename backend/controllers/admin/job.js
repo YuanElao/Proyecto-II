@@ -9,7 +9,7 @@ async list(req, res) {
     try {
 
       const cargos = await Cargo.listJob();
-      res.status(200).json(cargos.map(cargo => ({id: cargo.id_cargo, nombre: cargo.cargo, id_Dep: cargo.id_departamento, departamento: cargo.departamento})));
+      res.status(200).json(cargos.map(cargo => ({id: cargo.id_cargo, nombre: cargo.cargo, id_Dep: cargo.id_departamento, departamento: cargo.departamento}))); //Devuelve una lista de cargos con objetos cargo
 
     } catch (error) {
 

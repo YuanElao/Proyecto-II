@@ -10,7 +10,7 @@ const account = {
         const isAdmin = req.user?.role === 'admin';
 
         try {
-            if (!isRootAdmin && (c_rol === "admin" || c_root === 1)) {
+            if (!isRootAdmin && (c_rol === "admin" || c_root === 1)) { //si un usuario que no se un administrador rot intenta crear una cuenta con rol admin o con privilegios se lanza un error
                 throw new Error ("Acceso denegado")
             }
 
@@ -39,10 +39,10 @@ const account = {
 
         try {
             const cuenta = await Cuenta.getAccount(c_id);
-            const isRootAdmin = req.user?.root === 1;
+            const isRootAdmin = req.user?.root === 1; //  encadenamiento opcional, si req.user es null o undefined en lugar de lanzar error lo establecera como false o true dependiendo de el resultado
 
             // Validar permisos
-            if (!isRootAdmin && (cuenta.c_rol === 'admin' || c_rol === "admin" || c_root === 1)) {
+            if (!isRootAdmin && (cuenta.c_rol === 'admin' || c_rol === "admin" || c_root === 1)) { //si el usuario no es un administrador root y la cuenta que se esta modificando es admin, o se esta intentando establecer root a 1. Logica de seguridad para prevenir que no root asigne roles o privilegios
                 throw new Error("No puedes asignar este rol");
             }
 
@@ -66,7 +66,7 @@ const account = {
             const cuenta = await Cuenta.getAccount(req.params.c_id);
             const isRootAdmin = req.user?.root === 1;
 
-            if (!isRootAdmin && cuenta.c_rol === 'admin') {
+            if (!isRootAdmin && cuenta.c_rol === 'admin') {   // si un usuario que no es un admin root intenta eliminar uuna cuenta que tiene rol admin
                 throw new Error("No puedes eliminar esta cuenta");
             }
             await cuenta.deleteAccount();

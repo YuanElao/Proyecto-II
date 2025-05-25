@@ -11,7 +11,7 @@ const department = {
 
       const departamentos = await Departamento.listDep();
       console.log("Departamentos obtenidos:", departamentos)
-      res.status(200).json(departamentos.map(dep => ({id_departamento: dep.id_departamento, d_name: dep.d_name})));
+      res.status(200).json(departamentos.map(dep => ({id_departamento: dep.id_departamento, d_name: dep.d_name}))); //Crea una lista de departamentos con objetos departamento
 
     } catch (error) {
 

@@ -170,6 +170,37 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Botón Guardar
     btnGuardar.addEventListener('click', async () => {
+
+            if (!nombreInput.value.trim()) {
+        alert('El nombre es obligatorio');
+        nombreInput.focus();
+        return;
+    }
+    
+    if (!apellidoInput.value.trim()) {
+        alert('El apellido es obligatorio');
+        apellidoInput.focus();
+        return;
+    }
+    
+    if (!cedulaInput.value.trim()) {
+        alert('La cédula es obligatoria');
+        cedulaInput.focus();
+        return;
+    }
+    
+    if (!departamentoSelect.value) {
+        alert('Debe seleccionar un departamento');
+        departamentoSelect.focus();
+        return;
+    }
+    
+    if (!cargoSelect.value) {
+        alert('Debe seleccionar un cargo');
+        cargoSelect.focus();
+        return;
+    }
+
         const confirmacion = confirm('¿Guardar cambios?');
         if (!confirmacion) return;
 
@@ -500,6 +531,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const id_trabajador = workerData.trabajador.id_trabajador;
         const cedula = workerData.trabajador.cedula
 
+        if (tipo === 'permiso') {
+        const motivo = document.getElementById('motivoPermiso').value.trim();
+        if (!motivo) {
+            alert('Debe especificar un motivo para el permiso');
+            document.getElementById('motivoPermiso').focus();
+            return;
+        }
+
         try {
             let response;
             let endpoint;
@@ -523,13 +562,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     break;
                     
                 case 'permiso':
+                    
                     endpoint = `http://localhost:3000/admin/permission/create`;
                     body = {
                         cedula: cedula,
                         fecha_inicio: fechaSeleccionada,
                         fecha_fin: document.getElementById('fechaFinPermiso').value,
                         motivo: document.getElementById('motivoPermiso').value
+
                     };
+                    
                     break;
             }
             
@@ -554,7 +596,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error:', error);
             alert('Error al registrar evento');
         }
-    });
+        }}),
 
     // Función para editar permiso
     document.getElementById('btnEditarPermiso').addEventListener('click', () => {

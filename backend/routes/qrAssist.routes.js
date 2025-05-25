@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.post("/qrAssist-re",qrAssistRe.register);
 
+router.get("/assist-notify", qrAssistRe.sseHandler)
+
 module.exports = router;

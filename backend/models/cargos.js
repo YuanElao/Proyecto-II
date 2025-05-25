@@ -13,7 +13,7 @@ class Cargo {
   //Obtener todos los cargos
   static async listJob() {
     const result = await pool.query(`SELECT c.id_cargo, c.c_name AS cargo, d.d_name AS departamento FROM cargo c JOIN departamento d ON c.id_departamento = d.id_departamento ORDER BY d_name, c_name`);
-    return result.rows/*.map(row => new Cargo(row.id_cargo, row.cargo, row.id_departamento))*/;
+    return result.rows;
   }
 
   //Obtener cargos por departamento
