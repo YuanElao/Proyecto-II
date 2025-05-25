@@ -1,13 +1,13 @@
 // Crea un contenedor para notificaciones
-const notificationContainer = document.createElement('div');
-notificationContainer.style.position = 'fixed';
-notificationContainer.style.bottom = '20px';
-notificationContainer.style.right = '20px';
-notificationContainer.style.zIndex = '1000';
+const notificationContainer = document.createElement("div");
+notificationContainer.style.position = "fixed";
+notificationContainer.style.bottom = "20px";
+notificationContainer.style.right = "20px";
+notificationContainer.style.zIndex = "1000";
 document.body.appendChild(notificationContainer);
 
 // Estilo básico para notificaciones
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
   .simple-notification {
     background: #4CAF50;
@@ -24,16 +24,16 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Conexión SSE
-const eventSource = new EventSource('http://localhost:3000/app/assist-notify');
+const eventSource = new EventSource("http://localhost:3000/app/assist-notify");
 
 eventSource.onmessage = (event) => {
   const data = JSON.parse(event.data);
-  const notification = document.createElement('div');
-  notification.className = 'simple-notification';
+  const notification = document.createElement("div");
+  notification.className = "simple-notification";
   notification.textContent = data.message;
-  
+
   notificationContainer.appendChild(notification);
-  
+
   // Auto-eliminar después de 3 segundos
   setTimeout(() => {
     notification.remove();

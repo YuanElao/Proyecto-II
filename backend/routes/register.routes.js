@@ -1,6 +1,6 @@
 const express = require("express");
 const worker = require("../controllers/register");
-const authenticateJWT = require('../authmiddle');
+const authenticateJWT = require("../authmiddle");
 
 const router = express.Router();
 

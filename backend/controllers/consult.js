@@ -1,7 +1,6 @@
-const Trabajador = require("../models/trabajador")
+const Trabajador = require("../models/trabajador");
 
 const getW = {
-
   // Obtener la lista completa de trabajadores
 
   async list(req, res) {
@@ -10,7 +9,9 @@ const getW = {
       res.status(200).json(trabajadores);
     } catch (error) {
       console.error("Error al obtener la lista de trabajadores:", error);
-      res.status(500).json({ message: "Error al obtener la lista de trabajadores" });
+      res
+        .status(500)
+        .json({ message: "Error al obtener la lista de trabajadores" });
     }
   },
 
@@ -20,14 +21,17 @@ const getW = {
 
     try {
       console.log("Parametros Recibidos:", req.query);
-      const trabajadores = await Trabajador.searchWorker(search, departamento, cargo);
+      const trabajadores = await Trabajador.searchWorker(
+        search,
+        departamento,
+        cargo
+      );
       res.status(200).json(trabajadores);
     } catch (error) {
       console.error("Error al buscar trabajador:", error);
       res.status(500).json({ message: "Error al buscar trabajador" });
     }
-  }
+  },
 };
-
 
 module.exports = getW;

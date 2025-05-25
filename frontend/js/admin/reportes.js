@@ -1,135 +1,151 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    // Elementos del DOM
-    const tipoReporteSelect = document.getElementById('tipoReporte');
-    const recordOptionsDiv = document.getElementById('recordOptions');
-    const tipoRecordSelect = document.getElementById('tipoRecord');
-    const anioRecordSelect = document.getElementById('anioRecord');
-    const btnGenerarReporte = document.getElementById('btnGenerarReporte');
-    const reportContainer = document.getElementById('reportContainer');
-    
-    // Variables de estado
-    const token = sessionStorage.getItem('token');
-    const cedula = localStorage.getItem('cedulaActual');
-    let workerData = {};
+document.addEventListener("DOMContentLoaded", async () => {
+  // Elementos del DOM
+  const tipoReporteSelect = document.getElementById("tipoReporte");
+  const recordOptionsDiv = document.getElementById("recordOptions");
+  const tipoRecordSelect = document.getElementById("tipoRecord");
+  const anioRecordSelect = document.getElementById("anioRecord");
+  const btnGenerarReporte = document.getElementById("btnGenerarReporte");
+  const reportContainer = document.getElementById("reportContainer");
 
-    // Validaciones iniciales
-    if (!token || !cedula) {
-        window.location.href = '../login.html';
-        return;
+  // Variables de estado
+  const token = sessionStorage.getItem("token");
+  const cedula = localStorage.getItem("cedulaActual");
+  let workerData = {};
+
+  // Validaciones iniciales
+  if (!token || !cedula) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  try {
+    // Cargar datos del trabajador
+    const workerResponse = await fetch(
+      `http://localhost:3000/user/profile/${cedula}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!workerResponse.ok) {
+      throw new Error("Error al cargar datos del trabajador");
     }
 
+    workerData = await workerResponse.json();
+    setupEventListeners();
+    loadAvailableYears(); // Cargar años disponibles
+  } catch (error) {
+    console.error("Error:", error);
+    alert(error.message);
+    window.location.href = "Consultar.html";
+  }
+
+  function setupEventListeners() {
+    // Cambio en tipo de reporte
+    tipoReporteSelect.addEventListener("change", (e) => {
+      const showRecordOptions = e.target.value === "record";
+      recordOptionsDiv.style.display = showRecordOptions ? "block" : "none";
+    });
+
+    // Botón Generar Reporte
+    btnGenerarReporte.addEventListener("click", generateHTMLReport);
+  }
+
+  async function loadAvailableYears() {
     try {
-        // Cargar datos del trabajador
-        const workerResponse = await fetch(`http://localhost:3000/user/profile/${cedula}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!workerResponse.ok) {
-            throw new Error('Error al cargar datos del trabajador');
+      const { id_trabajador } = workerData.trabajador;
+      const response = await fetch(
+        `http://localhost:3000/admin/report/${id_trabajador}/anios`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
+      );
 
-        workerData = await workerResponse.json();
-        setupEventListeners();
-        loadAvailableYears(); // Cargar años disponibles
+      if (!response.ok) throw new Error("Error al obtener años disponibles");
 
+      const anios = await response.json();
+      anioRecordSelect.innerHTML = anios
+        .map(
+          (anio) =>
+            `<option value="${anio}" ${
+              anio === new Date().getFullYear() ? "selected" : ""
+            }>${anio}</option>`
+        )
+        .join("");
     } catch (error) {
-        console.error('Error:', error);
-        alert(error.message);
-        window.location.href = 'Consultar.html';
+      console.error("Error:", error);
+      alert(error.message);
     }
+  }
 
-    function setupEventListeners() {
-        // Cambio en tipo de reporte
-        tipoReporteSelect.addEventListener('change', (e) => {
-            const showRecordOptions = e.target.value === 'record';
-            recordOptionsDiv.style.display = showRecordOptions ? 'block' : 'none';
-        });
-
-        // Botón Generar Reporte
-        btnGenerarReporte.addEventListener('click', generateHTMLReport);
-    }
-
-    async function loadAvailableYears() {
-        try {
-            const { id_trabajador } = workerData.trabajador;
-            const response = await fetch(`http://localhost:3000/admin/report/${id_trabajador}/anios`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (!response.ok) throw new Error('Error al obtener años disponibles');
-
-            const anios = await response.json();
-            anioRecordSelect.innerHTML = anios.map(anio => 
-                `<option value="${anio}" ${anio === new Date().getFullYear() ? 'selected' : ''}>${anio}</option>`
-            ).join('');
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert(error.message);
-        }
-    }
-
-    async function generateHTMLReport() {
+  async function generateHTMLReport() {
     const { id_trabajador, nombre, apellido } = workerData.trabajador;
     const tipoReporte = tipoReporteSelect.value;
-    
+
     // Determinar qué tipo de reporte generar
-    if (tipoReporte === 'datos') {
-        await generateWorkerDataReport();
-        return;
+    if (tipoReporte === "datos") {
+      await generateWorkerDataReport();
+      return;
     }
 
     // Si es record laboral
     const tipoRecord = tipoRecordSelect.value;
     const anio = anioRecordSelect.value;
-    
-    try {
-        // Mostrar indicador de carga
-        btnGenerarReporte.disabled = true;
-        btnGenerarReporte.innerHTML = '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
-        
-        // Obtener datos del servidor
-        const params = new URLSearchParams({ 
-            tipo: tipoRecord,
-            anio: anio
-        });
-        
-        const response = await fetch(`http://localhost:3000/admin/report/${id_trabajador}/data?${params}`, {
-            headers: { 
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Error al obtener datos para el reporte');
+    try {
+      // Mostrar indicador de carga
+      btnGenerarReporte.disabled = true;
+      btnGenerarReporte.innerHTML =
+        '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
+
+      // Obtener datos del servidor
+      const params = new URLSearchParams({
+        tipo: tipoRecord,
+        anio: anio,
+      });
+
+      const response = await fetch(
+        `http://localhost:3000/admin/report/${id_trabajador}/data?${params}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const eventos = await response.json();
-        
-        // Llamar a la función correcta para generar el reporte
-        await generateRecordReport();
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          error.message || "Error al obtener datos para el reporte"
+        );
+      }
 
+      const eventos = await response.json();
+
+      // Llamar a la función correcta para generar el reporte
+      await generateRecordReport();
     } catch (error) {
-        console.error('Error al generar reporte:', error);
-        alert('Error al generar reporte: ' + error.message);
+      console.error("Error al generar reporte:", error);
+      alert("Error al generar reporte: " + error.message);
     } finally {
-        btnGenerarReporte.disabled = false;
-        btnGenerarReporte.innerHTML = '<i class="bx bx-file"></i> Generar Reporte';
+      btnGenerarReporte.disabled = false;
+      btnGenerarReporte.innerHTML =
+        '<i class="bx bx-file"></i> Generar Reporte';
     }
-}
+  }
 
-    async function generateWorkerDataReport() {
+  async function generateWorkerDataReport() {
     try {
-        btnGenerarReporte.disabled = true;
-        btnGenerarReporte.innerHTML = '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
-        
-        const { nombre, apellido } = workerData.trabajador;
-        
-        // Crear ventana de impresión directamente
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
+      btnGenerarReporte.disabled = true;
+      btnGenerarReporte.innerHTML =
+        '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
+
+      const { nombre, apellido } = workerData.trabajador;
+
+      // Crear ventana de impresión directamente
+      const printWindow = window.open("", "_blank");
+      printWindow.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
@@ -153,7 +169,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             <body>
                 <div class="reporte-header">
                     <h2>Datos del Trabajador</h2>
-                    <p>Generado el: ${new Date().toLocaleDateString('es-ES')}</p>
+                    <p>Generado el: ${new Date().toLocaleDateString(
+                      "es-ES"
+                    )}</p>
                 </div>
                 <div class="datos-trabajador">
                     <div class="fila-dato">
@@ -162,23 +180,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="fila-dato">
                         <span class="etiqueta">Cédula:</span>
-                        <span class="valor">${workerData.trabajador.cedula}</span>
+                        <span class="valor">${
+                          workerData.trabajador.cedula
+                        }</span>
                     </div>
                     <div class="fila-dato">
                         <span class="etiqueta">Departamento:</span>
-                        <span class="valor">${workerData.trabajador.departamento || 'N/A'}</span>
+                        <span class="valor">${
+                          workerData.trabajador.departamento || "N/A"
+                        }</span>
                     </div>
                     <div class="fila-dato">
                         <span class="etiqueta">Cargo:</span>
-                        <span class="valor">${workerData.trabajador.cargo || 'N/A'}</span>
+                        <span class="valor">${
+                          workerData.trabajador.cargo || "N/A"
+                        }</span>
                     </div>
                 </div>
                 <div class="resumen">
                     <h3>Resumen Laboral</h3>
                     <div class="contadores">
-                        <div>Asistencias: ${workerData.contadores?.asistencias || 0}</div>
+                        <div>Asistencias: ${
+                          workerData.contadores?.asistencias || 0
+                        }</div>
                         <div>Faltas: ${workerData.contadores?.faltas || 0}</div>
-                        <div>Permisos: ${workerData.contadores?.permisos || 0}</div>
+                        <div>Permisos: ${
+                          workerData.contadores?.permisos || 0
+                        }</div>
                     </div>
                 </div>
                 <script>
@@ -192,48 +220,54 @@ document.addEventListener('DOMContentLoaded', async () => {
             </body>
             </html>
         `);
-        printWindow.document.close();
-        
+      printWindow.document.close();
     } catch (error) {
-        throw error;
+      throw error;
     } finally {
-        btnGenerarReporte.disabled = false;
-        btnGenerarReporte.innerHTML = '<i class="bx bx-file"></i> Generar Reporte';
+      btnGenerarReporte.disabled = false;
+      btnGenerarReporte.innerHTML =
+        '<i class="bx bx-file"></i> Generar Reporte';
     }
-}
+  }
 
-async function generateRecordReport() {
+  async function generateRecordReport() {
     try {
-        const { id_trabajador, nombre, apellido } = workerData.trabajador;
-        const tipoRecord = tipoRecordSelect.value;
-        const anio = anioRecordSelect.value;
-        
-        btnGenerarReporte.disabled = true;
-        btnGenerarReporte.innerHTML = '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
-        
-        // Obtener datos del servidor
-        const params = new URLSearchParams({ 
-            tipo: tipoRecord,
-            anio: anio
-        });
-        
-        const response = await fetch(`http://localhost:3000/admin/report/${id_trabajador}/data?${params}`, {
-            headers: { 
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
+      const { id_trabajador, nombre, apellido } = workerData.trabajador;
+      const tipoRecord = tipoRecordSelect.value;
+      const anio = anioRecordSelect.value;
 
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Error al obtener datos para el reporte');
+      btnGenerarReporte.disabled = true;
+      btnGenerarReporte.innerHTML =
+        '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
+
+      // Obtener datos del servidor
+      const params = new URLSearchParams({
+        tipo: tipoRecord,
+        anio: anio,
+      });
+
+      const response = await fetch(
+        `http://localhost:3000/admin/report/${id_trabajador}/data?${params}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
+      );
 
-        const eventos = await response.json();
-        
-        // Crear ventana de impresión directamente
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(
+          error.message || "Error al obtener datos para el reporte"
+        );
+      }
+
+      const eventos = await response.json();
+
+      // Crear ventana de impresión directamente
+      const printWindow = window.open("", "_blank");
+      printWindow.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
@@ -290,8 +324,18 @@ async function generateRecordReport() {
             <body>
                 <div class="reporte-header">
                     <h2>Record Laboral - ${nombre} ${apellido}</h2>
-                    <p>Año: ${anio} | Tipo: ${tipoRecord === 'general' ? 'General' : tipoRecord === 'asistencias' ? 'Asistencias' : tipoRecord === 'faltas' ? 'Faltas' : 'Permisos'}</p>
-                    <p>Generado el: ${new Date().toLocaleDateString('es-ES')}</p>
+                    <p>Año: ${anio} | Tipo: ${
+        tipoRecord === "general"
+          ? "General"
+          : tipoRecord === "asistencias"
+          ? "Asistencias"
+          : tipoRecord === "faltas"
+          ? "Faltas"
+          : "Permisos"
+      }</p>
+                    <p>Generado el: ${new Date().toLocaleDateString(
+                      "es-ES"
+                    )}</p>
                 </div>
                 
                 <div id="calendarContainer">
@@ -315,66 +359,73 @@ async function generateRecordReport() {
             </body>
             </html>
         `);
-        printWindow.document.close();
-        
+      printWindow.document.close();
     } catch (error) {
-        throw error;
+      throw error;
     } finally {
-        btnGenerarReporte.disabled = false;
-        btnGenerarReporte.innerHTML = '<i class="bx bx-file"></i> Generar Reporte';
+      btnGenerarReporte.disabled = false;
+      btnGenerarReporte.innerHTML =
+        '<i class="bx bx-file"></i> Generar Reporte';
     }
-}
+  }
 
-function generateCalendarHTML(anio, eventos) {
+  function generateCalendarHTML(anio, eventos) {
     return Array.from({ length: 12 }, (_, mes) => {
-        const primerDia = new Date(anio, mes, 1);
-        const ultimoDia = new Date(anio, mes + 1, 0);
-        const nombreMes = primerDia.toLocaleDateString('es-ES', { month: 'long' });
-        
-        let diasHTML = '';
-        for (let i = 1; i <= ultimoDia.getDate(); i++) {
-            const fechaISO = new Date(anio, mes, i).toISOString().split('T')[0];
-            const eventosDia = eventos.filter(e => e.start.startsWith(fechaISO));
-            
-            let claseDia = 'dia';
-            let estiloDia = '';
-            let tooltip = '';
-            
-            if (eventosDia.length > 0) {
-                const evento = eventosDia[0];
-                claseDia += ' evento';
-                
-                // Estilo según tipo de evento
-                if (evento.tipo === 'Asistencia') {
-                    estiloDia = 'color: #28a745;'; // Verde
-                } else if (evento.tipo === 'Falta') {
-                    estiloDia = 'color: #dc3545;'; // Rojo
-                } else if (evento.tipo === 'Permiso') {
-                    estiloDia = 'color: #ffc107;'; // Amarillo
-                }
-                
-                // Tooltip mejorado para permisos
-                if (evento.tipo === 'Permiso') {
-                    const permiso = eventos.find(e => e.id === evento.id && e.motivo);
-                    tooltip = `title="Permiso: ${permiso?.motivo || 'Sin motivo especificado'}"`;
-                } else {
-                    tooltip = `title="${evento.tipo}${evento.hora ? ' - Hora: ' + evento.hora : ''}"`;
-                }
-            }
-            
-            diasHTML += `<div class="${claseDia}" style="${estiloDia}" ${tooltip}>${i}</div>`;
+      const primerDia = new Date(anio, mes, 1);
+      const ultimoDia = new Date(anio, mes + 1, 0);
+      const nombreMes = primerDia.toLocaleDateString("es-ES", {
+        month: "long",
+      });
+
+      let diasHTML = "";
+      for (let i = 1; i <= ultimoDia.getDate(); i++) {
+        const fechaISO = new Date(anio, mes, i).toISOString().split("T")[0];
+        const eventosDia = eventos.filter((e) => e.start.startsWith(fechaISO));
+
+        let claseDia = "dia";
+        let estiloDia = "";
+        let tooltip = "";
+
+        if (eventosDia.length > 0) {
+          const evento = eventosDia[0];
+          claseDia += " evento";
+
+          // Estilo según tipo de evento
+          if (evento.tipo === "Asistencia") {
+            estiloDia = "color: #28a745;"; // Verde
+          } else if (evento.tipo === "Falta") {
+            estiloDia = "color: #dc3545;"; // Rojo
+          } else if (evento.tipo === "Permiso") {
+            estiloDia = "color: #ffc107;"; // Amarillo
+          }
+
+          // Tooltip mejorado para permisos
+          if (evento.tipo === "Permiso") {
+            const permiso = eventos.find((e) => e.id === evento.id && e.motivo);
+            tooltip = `title="Permiso: ${
+              permiso?.motivo || "Sin motivo especificado"
+            }"`;
+          } else {
+            tooltip = `title="${evento.tipo}${
+              evento.hora ? " - Hora: " + evento.hora : ""
+            }"`;
+          }
         }
-        
-        return `
+
+        diasHTML += `<div class="${claseDia}" style="${estiloDia}" ${tooltip}>${i}</div>`;
+      }
+
+      return `
             <div class="mes-calendario">
                 <h3>${nombreMes}</h3>
                 <div class="dias-semana">
-                    ${['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'].map(d => `<span>${d}</span>`).join('')}
+                    ${["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
+                      .map((d) => `<span>${d}</span>`)
+                      .join("")}
                 </div>
                 <div class="dias-mes">${diasHTML}</div>
             </div>
         `;
-    }).join('');
-}
-
+    }).join("");
+  }
 });

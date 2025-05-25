@@ -25,9 +25,11 @@ class Permiso {
       const { id_trabajador, asistencias, faltas, permisos } = result.rows[0];
 
       if (!id_trabajador) throw new Error("El trabajador no existe");
-      if (asistencias > 0) throw new Error("Hay asistencia(s) en el rango de fechas");
+      if (asistencias > 0)
+        throw new Error("Hay asistencia(s) en el rango de fechas");
       if (faltas > 0) throw new Error("Hay falta(s) en el rango de fechas");
-      if (permisos > 0) throw new Error("Ya existe un permiso en el rango de fechas");
+      if (permisos > 0)
+        throw new Error("Ya existe un permiso en el rango de fechas");
 
       return id_trabajador; // Devuelve el ID del trabajador si todo está validado
     } catch (error) {
@@ -43,41 +45,41 @@ class Permiso {
   }
 
   static async countPermission(id_trabajador) {
-    const result = await pool.query("SELECT COUNT(*) AS total FROM permisos WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE)", [id_trabajador]);
+    const result = await pool.query(
+      "SELECT COUNT(*) AS total FROM permisos WHERE id_trabajador = $1 AND EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE)",
+      [id_trabajador]
+    );
     return result.rows[0].total;
   }
 
-  static async getDates(id_trabajador){
+  static async getDates(id_trabajador) {
     const result = await pool.query(
       `SELECT id_p, fecha_inicio, fecha_fin, motivo FROM permisos WHERE id_trabajador = $1 AND (EXTRACT(YEAR FROM fecha_inicio) = EXTRACT(YEAR FROM CURRENT_DATE) OR EXTRACT(YEAR FROM fecha_fin) = EXTRACT(YEAR FROM CURRENT_DATE)) ORDER BY fecha_inicio`,
       [id_trabajador]
     );
-  
-    return result.rows.map(row => ({
+
+    return result.rows.map((row) => ({
       id: row.id_p,
-      start: row.fecha_inicio.toISOString().split('T')[0],
-      end: row.fecha_fin.toISOString().split('T')[0],
-      motivo: row.motivo
+      start: row.fecha_inicio.toISOString().split("T")[0],
+      end: row.fecha_fin.toISOString().split("T")[0],
+      motivo: row.motivo,
     }));
   }
 
-      static async update(id_p, motivo) {
-        try {
-          await pool.query("UPDATE permisos SET motivo = $1 WHERE id_p = 2", [motivo, id_p]);
-          
-        }catch (error) {
-          throw error;
-        }
-      }
-
-      static async delete(id_p) {
-      await pool.query(
-        "DELETE FROM permisos WHERE id_p = $1",
-        [id_p]
-      );
+  static async update(id_p, motivo) {
+    try {
+      await pool.query("UPDATE permisos SET motivo = $1 WHERE id_p = 2", [
+        motivo,
+        id_p,
+      ]);
+    } catch (error) {
+      throw error;
     }
+  }
+
+  static async delete(id_p) {
+    await pool.query("DELETE FROM permisos WHERE id_p = $1", [id_p]);
+  }
 }
-
-
 
 module.exports = Permiso;
