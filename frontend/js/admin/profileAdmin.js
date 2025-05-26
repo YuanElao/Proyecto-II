@@ -555,82 +555,73 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
   // Función para registrar nuevo evento
-  document
-    .getElementById("btnRegistrarEvento")
-    .addEventListener("click", async () => {
-      console.log("Boron");
-      const tipo = document.getElementById("tipoEvento").value;
+document.getElementById("btnRegistrarEvento").addEventListener("click", async () => {
+    const tipo = document.getElementById("tipoEvento").value;
+    const id_trabajador = workerData.trabajador.id_trabajador;
+    const cedula = workerData.trabajador.cedula;
 
-      const id_trabajador = workerData.trabajador.id_trabajador;
-      const cedula = workerData.trabajador.cedula;
+    try {
+        let response;
+        let endpoint;
+        let body = {};
 
-      if (tipo === "permiso") {
-        const motivo = document.getElementById("motivoPermiso").value.trim();
-        if (!motivo) {
-          alert("Debe especificar un motivo para el permiso");
-          document.getElementById("motivoPermiso").focus();
-          return;
-        }
-
-        try {
-          let response;
-          let endpoint;
-          let body = {};
-
-          switch (tipo) {
+        switch (tipo) {
             case "asistencia":
-              endpoint = `http://localhost:3000/admin/assist/create`;
-              body = {
-                id_trabajador: id_trabajador,
-                fecha: fechaSeleccionada,
-              };
-              break;
+                endpoint = `http://localhost:3000/admin/assist/create`;
+                body = {
+                    id_trabajador: id_trabajador,
+                    fecha: fechaSeleccionada,
+                };
+                break;
 
             case "falta":
-              endpoint = `http://localhost:3000/admin/fault/create`;
-              body = {
-                id_trabajador: id_trabajador,
-                fecha: fechaSeleccionada,
-              };
-              break;
+                endpoint = `http://localhost:3000/admin/fault/create`;
+                body = {
+                    id_trabajador: id_trabajador,
+                    fecha: fechaSeleccionada,
+                };
+                break;
 
             case "permiso":
-              endpoint = `http://localhost:3000/admin/permission/create`;
-              body = {
-                cedula: cedula,
-                fecha_inicio: fechaSeleccionada,
-                fecha_fin: document.getElementById("fechaFinPermiso").value,
-                motivo: document.getElementById("motivoPermiso").value,
-              };
+                const motivo = document.getElementById("motivoPermiso").value.trim();
+                if (!motivo) {
+                    alert("Debe especificar un motivo para el permiso");
+                    document.getElementById("motivoPermiso").focus();
+                    return;
+                }
+                
+                endpoint = `http://localhost:3000/admin/permission/create`;
+                body = {
+                    cedula: cedula,
+                    fecha_inicio: fechaSeleccionada,
+                    fecha_fin: document.getElementById("fechaFinPermiso").value,
+                    motivo: document.getElementById("motivoPermiso").value,
+                };
+                break;
+        }
 
-              break;
-          }
-
-          response = await fetch(endpoint, {
+        response = await fetch(endpoint, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(body),
-          });
+        });
 
-          if (response.ok) {
+        if (response.ok) {
             alert("Evento registrado correctamente");
             hidePopup("popupRegistrar");
             window.location.reload();
-          } else {
+        } else {
             const errorData = await response.json();
-            alert(
-              `Error: ${errorData.message || "No se pudo registrar el evento"}`
-            );
-          }
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Error al registrar evento");
+            alert(`Error: ${errorData.message || "No se pudo registrar el evento"}`);
         }
-      }
-    }),
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error al registrar evento");
+    }
+})
     // Función para editar permiso
     document
       .getElementById("btnEditarPermiso")
@@ -659,6 +650,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const nuevoMotivo = document.getElementById("motivoExistente").value;
         const cedula = localStorage.getItem("cedulaActual");
 
+        if(!nuevoMotivo) {
+          alert("El motivo no puede estar en blanco")
+          return
+        }
+
         const response = await fetch(
           `http://localhost:3000/admin/permission/update`,
           {
@@ -668,7 +664,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              fecha_inicio: eventoActual.start.split("T")[0],
+              id_p: eventoActual.id,
               motivo: nuevoMotivo,
             }),
           }

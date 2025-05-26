@@ -15,7 +15,7 @@ class Reporte {
   }
 
   static async obtenerRecord(id_trabajador, filtros = {}) {
-    const { tipo, anio, mes, trimestre, semestre } = filtros;
+    const { tipo, anio } = filtros;
     let query = `
       WITH eventos AS (
         SELECT id_a as id, 'Asistencia' as tipo, fecha as start, hora, NULL as motivo, 'asistencia' as tipo_evento
@@ -37,30 +37,7 @@ class Reporte {
       params.push(parseInt(anio));
     }
 
-    if (mes) {
-      conditions.push(`EXTRACT(MONTH FROM start) = $${paramIndex++}`);
-      params.push(parseInt(mes));
-    }
 
-    if (trimestre) {
-      conditions.push(
-        `EXTRACT(MONTH FROM start) BETWEEN $${paramIndex} AND $${
-          paramIndex + 1
-        }`
-      );
-      params.push((trimestre - 1) * 3 + 1, (trimestre - 1) * 3 + 3);
-      paramIndex += 2;
-    }
-
-    if (semestre) {
-      conditions.push(
-        `EXTRACT(MONTH FROM start) BETWEEN $${paramIndex} AND $${
-          paramIndex + 1
-        }`
-      );
-      params.push((semestre - 1) * 6 + 1, (semestre - 1) * 6 + 6);
-      paramIndex += 2;
-    }
 
     if (tipo && tipo !== "general") {
       const tipoMap = {

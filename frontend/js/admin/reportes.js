@@ -197,18 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         }</span>
                     </div>
                 </div>
-                <div class="resumen">
-                    <h3>Resumen Laboral</h3>
-                    <div class="contadores">
-                        <div>Asistencias: ${
-                          workerData.contadores?.asistencias || 0
-                        }</div>
-                        <div>Faltas: ${workerData.contadores?.faltas || 0}</div>
-                        <div>Permisos: ${
-                          workerData.contadores?.permisos || 0
-                        }</div>
-                    </div>
-                </div>
+                
                 <script>
                     window.onload = function() {
                         setTimeout(function() {
@@ -275,13 +264,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <link rel="stylesheet" href="../../css/admin/calendarioAdmin.css">
                 <style>
                     @page { 
-                        size: A4 landscape;
+                        size: letter landscape;
                         margin: 0.5cm;
                     }
                     body { 
                         font-family: Arial, sans-serif;
                         margin: 0;
-                        padding: 20px;
+                        padding: 10px;
+                        font-size: 0.9rem;
                     }
                     .reporte-header { 
                         text-align: center; 
@@ -291,12 +281,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                     #calendarContainer {
                         display: grid;
                         grid-template-columns: repeat(3, 1fr);
-                        gap: 20px;
+                        gap: 15px;
                         padding: 15px;
                     }
                     .mes-calendario {
                         page-break-inside: avoid;
                         break-inside: avoid;
+                        tranform: scale(0.95)
+                        tranform-origin: top left:
                     }
                     .leyenda {
                         display: flex;
@@ -324,6 +316,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             <body>
                 <div class="reporte-header">
                     <h2>Record Laboral - ${nombre} ${apellido}</h2>
+                    <div class = "info-trabajador">
+                      <div><strong>Departamento:</strong>${workerData.trabajador.departamento}</div>
+                      <div><strong>Cargo:</strong>${workerData.trabajador.cargo}</div>
+                    </div>
                     <p>Año: ${anio} | Tipo: ${
         tipoRecord === "general"
           ? "General"

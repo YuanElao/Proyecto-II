@@ -68,7 +68,7 @@ class Permiso {
 
   static async update(id_p, motivo) {
     try {
-      await pool.query("UPDATE permisos SET motivo = $1 WHERE id_p = 2", [
+      await pool.query("UPDATE permisos SET motivo = $1 WHERE id_p = $2", [
         motivo,
         id_p,
       ]);

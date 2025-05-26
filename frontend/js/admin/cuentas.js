@@ -138,6 +138,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         newUsername = account.c_name;
       }
 
+      if (newUsername.length < 8 ) {
+      alert("El nombre de usuario debe contener 8 caracteres o mas");
+      return;
+      }
+
+      if (newPassword.length < 5 ) {
+      alert("La contraseña debe contener 5 caracteres o mas");
+      return;
+      }
+
+
       try {
         const endpoint =
           account.c_rol === "admin"
@@ -264,6 +275,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       return;
     }
 
+    if (username.length < 8 ) {
+      alert("El nombre de usuario debe contener 8 caracteres o mas");
+      return;
+    } 
+    
+    if (password.length < 5 ) {
+      alert("La contraseña debe contener 5 caracteres o mas");
+      return;
+    }
+
+  
     try {
       const endpoint =
         role === "admin"

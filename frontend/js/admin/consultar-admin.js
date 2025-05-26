@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
 
     if (confirmacion?.toLowerCase() !== "confirmar") {
-      alert('Accioon cancelada. Debe escribir "confirmar" para continuar');
+      alert('Accion cancelada. Debe escribir "confirmar" para continuar');
       return;
     }
 
@@ -208,11 +208,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       );
 
-      if (response.ok) {
-        alert("Faltas registradas exitosamente");
+      if (!response.ok){
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al registrar faltas");
       }
 
-      if (!response.ok) throw new Error(data.error);
+      const data = await response.json();
+      alert(data.message || "Faltas registradas exitosamente")
+
     } catch (error) {
       alert(`Error: ${error.message}`);
     }

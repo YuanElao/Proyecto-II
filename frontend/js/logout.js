@@ -24,13 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       window.location.href = "/frontend/views/login.html";
 
-      /* const confirmar = confirm('Estas seguro de que deseas cerrar sesion?');
-            if (confirmar) {
-
-                sessionStorage.removeItem('token');
-
-                window.location.href = '/frontend/views/login.html';
-            }*/
+      
     });
   }
 });
