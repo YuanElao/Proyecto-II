@@ -8,4 +8,11 @@ router.get("/report/:id_trabajador/anios",authenticateJWT('admin'), report.obten
 
 router.get("/report/:id_trabajador/data",authenticateJWT('admin'), report.obtenerDatosReporte);
 
+// Nueva ruta para obtener años generales
+router.get("/report/anios-generales", authenticateJWT('admin'), report.obtenerAniosGenerales);
+
+// Nueva ruta para eliminar por año
+router.delete("/report/eliminar/:anio", authenticateJWT('admin'), report.eliminarPorAnio);
+
+
 module.exports = router;

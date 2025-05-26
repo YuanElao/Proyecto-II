@@ -56,6 +56,48 @@ class Reporte {
     const result = await pool.query(query, params);
     return result.rows;
   }
+  // Método para obtener años disponibles de TODOS los registros
+  static async obtenerAniosGenerales() {
+    const query = `
+      SELECT DISTINCT EXTRACT(YEAR FROM fecha) as anio 
+      FROM (
+        SELECT fecha FROM asistencias
+        UNION SELECT fecha FROM faltas
+        UNION SELECT fecha_inicio as fecha FROM permisos
+      ) AS fechas 
+      ORDER BY anio DESC`;
+    
+    const result = await pool.query(query);
+    return result.rows.map((row) => row.anio);
+  }
+
+  // Método para eliminar registros por año
+  static async eliminarPorAnio(anio) {
+    try {
+      await pool.query('BEGIN');
+      
+      await pool.query(
+        `DELETE FROM asistencias WHERE EXTRACT(YEAR FROM fecha) = $1`,
+        [anio]
+      );
+      
+      await pool.query(
+        `DELETE FROM faltas WHERE EXTRACT(YEAR FROM fecha) = $1`,
+        [anio]
+      );
+      
+      await pool.query(
+        `DELETE FROM permisos WHERE EXTRACT(YEAR FROM fecha_inicio) = $1`,
+        [anio]
+      );
+      
+      await pool.query('COMMIT');
+      return true;
+    } catch (error) {
+      await pool.query('ROLLBACK');
+      throw error;
+    }
+  }
 }
 
 module.exports = Reporte;

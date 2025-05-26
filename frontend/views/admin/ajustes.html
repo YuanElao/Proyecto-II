@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustes</title>
+    <link rel="stylesheet" href="../../css/admin/ajustes.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'>
+</head>
+<body>
+    <!--Menú Superior (igual que en tus otros archivos)-->
+    <header class="fondo-menu">
+        <div class="menu-container">
+            <div class="logo">
+                <img src="../../img/logo.png" alt="Logo" />
+            </div>
+            <nav class="nav-menu">
+                <ul class="menu-horizontal">
+                    <li><a href="index.html" class="menu blue"><i class="bi bi-house-door-fill"></i>Inicio</a></li>
+                    <li><a href="Consultar.html" class="menu blue"><i class="bx bxs-search-alt-2"></i>Consulta</a></li>
+                    <li><a href="permisos.html" class="menu blue"><i class="bi bi-clipboard2-check-fill"></i>Permisos</a></li>
+                    <li><a href="cuentas.html" class="menu blue"><i class="bx bxs-grid-alt"></i>Cuentas</a></li>
+                    <li><a href="departamentos.html" class="menu blue"><i class="bx bxs-buildings"></i>Departamentos</a></li>
+                    <li id="ajustesMenuItem" style="display: none;"><a href="ajustes.html" class="menu blue"><i class='bx bxs-cog'></i>Ajustes</a></li>
+                    <li><a href="#" id="cerrarSesion" class="menu blue cerrar-sesion"><i class="bx bxs-log-out"></i>Cerrar sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+    <div class="fondo2">
+        <h1>Eliminar Reportes por Año</h1>
+        
+        <div class="seleccionable">
+            <select id="select-anio" class="seleccionable1">
+                <option value="" disabled selected>Cargando años...</option>
+            </select>
+        </div>
+        
+        <button id="btn-eliminar" class="btn btn-danger">
+            <i class="bi bi-trash-fill"></i> Eliminar Reportes
+        </button>
+    </div>
+</main>
+
+    <script src="../../extra/indexAjustes.js"></script>
+    <script src="../../extra/notifyScript.js"></script>
+    <script src="../../js/logout.js"></script>
+    <script src="../../js/admin/ajustes.js"></script>
+</body>
+</html>

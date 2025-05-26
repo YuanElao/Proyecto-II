@@ -68,6 +68,48 @@ const report = {
       });
     }
   },
+
+  // Obtener años generales
+  async obtenerAniosGenerales(req, res) {
+    try {
+      const anios = await Reporte.obtenerAniosGenerales();
+      res.json(anios);
+    } catch (error) {
+      console.error("Error al obtener años generales:", error);
+      res.status(500).json({
+        message: "Error al obtener los años disponibles",
+        error: error.message,
+      });
+    }
+  },
+
+  // Eliminar por año
+  async eliminarPorAnio(req, res) {
+    const { anio } = req.params;
+
+    try {
+      if (!anio) {
+        return res.status(400).json({ 
+          message: "El año es requerido" 
+        });
+      }
+
+      const resultado = await Reporte.eliminarPorAnio(anio);
+      
+      if (resultado) {
+        res.json({ 
+          success: true, 
+          message: `Reportes del año ${anio} eliminados correctamente` 
+        });
+      }
+    } catch (error) {
+      console.error("Error al eliminar reportes:", error);
+      res.status(500).json({ 
+        message: "Error al eliminar reportes", 
+        error: error.message 
+      });
+    }
+  }
 };
 
 module.exports = report;
