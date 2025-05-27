@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${t.departamento}</td>
                 <td>${t.cargo}</td>
             </tr>`
-    );
+    ).join('');
   };
 
   await loadDepartment();

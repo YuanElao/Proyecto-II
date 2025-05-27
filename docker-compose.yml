@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: alcaldia
+    ports:
+      - "5432:5432"  # Corregido: PostgreSQL usa puerto 5432 por defecto
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:  # Opcional: verifica que la DB esté lista
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend Node.js
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432  # Ahora coincide con el puerto interno de PostgreSQL
+      DB_USER: postgres
+      DB_PASSWORD: admin
+      DB_NAME: alcaldia
+    depends_on:
+      db:
+        condition: service_healthy  # Espera hasta que la DB esté lista
+    restart: unless-stopped  # Reinicia automáticamente si falla
+
+volumes:
+  postgres_data:
