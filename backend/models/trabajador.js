@@ -2,7 +2,7 @@ const pool = require("../database/keys");
 const crypto = require("crypto");
 
 class Trabajador {
-  constructor(
+  constructor( // el constructor es un metodo esppecial que se ejecuta cada vez que se crea una nueva instancia(objeto) y se encarga de la asignacion de valores
     tname,
     tapellido,
     tcedula,
@@ -15,7 +15,7 @@ class Trabajador {
     this.id_departamento = id_departamento;
     this.id_cargo = id_cargo;
 
-    this.registerWorker = this.registerWorker.bind(this);
+    this.registerWorker = this.registerWorker.bind(this); // el bind sirve para no perder el contexto del metodo
   }
 
   //Registrar trabajadores
@@ -106,7 +106,7 @@ class Trabajador {
                   OR LOWER(t.t_apellido) LIKE LOWER($${params.length + 1})
               )
           `;
-      params.push(`%${search}%`);
+      params.push(`%${search}%`); //se anade el termiino de busqueda al array de parametros devuelto en % para hacer busquedas parciales
     }
 
     // Filtro por departamento

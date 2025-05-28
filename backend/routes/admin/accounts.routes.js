@@ -1,8 +1,11 @@
-const express = require("express");
-const account = require("../../controllers/admin/accounts")
-const authenticateJWT = require('../../authmiddle');
+const express = require("express"); //se importa la libreria de express
+const account = require("../../controllers/admin/accounts") // se iimporta el controlador en este caso cuentas
+const authenticateJWT = require('../../authmiddle'); // se importa l middlewware de autenticacion
 
-const router = express.Router();
+const router = express.Router(); //se crea una iinstancia de enrutador, esta es una mini aplicacion que manea sus propias rutasy middles
+
+
+//aqui se establecen los endpoints a los que el frontend hhara la peticion
 
 router.get("/account/list", authenticateJWT("admin"), account.list);
 
