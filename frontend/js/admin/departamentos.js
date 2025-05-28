@@ -138,6 +138,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+      //validar solo letras
+      const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+
+      // Validar nombres y apellidos
+      if (!soloLetras.test(nombre)) {
+        alert("El nombre solo puede contener letras y espacios");
+        return;
+      }
+
     try {
       const endpoint =
         action === "departamento" ? "/admin/department/add" : "/admin/job/add";
@@ -231,6 +240,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("click", async () => {
       const nuevoNombre = document.getElementById("editDepNombre").value;
 
+      if(!nuevoNombre) {
+        alert("El nombre no puede estar vacio")
+        return
+      }
+
+      //validar solo letras
+      const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+
+      // Validar nombres y apellidos
+      if (!soloLetras.test(nuevoNombre)) {
+        alert("El nombre solo puede contener letras y espacios");
+        return;
+      }
+
       try {
         const response = await fetch(
           `http://localhost:3000/admin/department/${currentEditId}`,
@@ -258,6 +281,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("click", async () => {
       const nuevoNombre = document.getElementById("editCarNombre").value;
       const Dep = document.getElementById("editCarDepartamento").value;
+
+      if(!nuevoNombre) {
+        alert("El nombre no puede estar vacio")
+        return
+      }
+
+      //validar solo letras
+      const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+
+      // Validar nombres y apellidos
+      if (!soloLetras.test(nuevoNombre)) {
+        alert("El nombre solo puede contener letras y espacios");
+        return;
+      }
 
       try {
         const response = await fetch(

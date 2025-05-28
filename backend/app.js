@@ -43,7 +43,7 @@ app.use(morgan("tiny")); //Informacion resumida de las peticiones
 app.use(cors()); //Pemitimos que se acceda al servidor desde otros dominios (frontend)
 app.use(express.json()); //Con este middle recibimos y convertimos JSON en objetos JavaScript
 app.use(express.urlencoded({ extended: true })); //Con este podemos recibir y procesar datos enviados desde un formulario HTML
-app.use(express.static(path.join(__dirname, "../frontend")));//Sirve archivos estaticos que no necesian ser generados dinamicamente por el servidor
+
 console.log(__dirname);
 
 

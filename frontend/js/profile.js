@@ -24,13 +24,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const data = await response.json();
     console.log(data);
 
-    localStorage.removeItem("cedulaActual");
+    
     // Llenar datos principales
     document.getElementById("nombre").value = data.trabajador.nombre;
     document.getElementById("apellido").value = data.trabajador.apellido;
     document.getElementById("cedula").value = data.trabajador.cedula;
-    document.getElementById("departamento").value =
-      data.trabajador.departamento;
+    document.getElementById("departamento").value = data.trabajador.departamento;
     document.getElementById("cargo").value = data.trabajador.cargo;
 
     const qrElement = document.querySelector(".codigoqr");

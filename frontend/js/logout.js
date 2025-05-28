@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("popstate", () => {
     sessionStorage.removeItem("token");
-    window.location.href = "/frontend/views/login.html";
+    window.location.href = "/views/login.html";
   });
 
   // Detectar clics en enlaces internos

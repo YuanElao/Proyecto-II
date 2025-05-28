@@ -157,6 +157,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     .addEventListener("submit", async (e) => {
       e.preventDefault();
 
+
+      const cedulaInput = document.getElementById("cedulaModal");
+      const cedulaValue = cedulaInput.value.trim()
+
+      const nombre = document.getElementById("nombreModal").value.trim();
+      const apellido = document.getElementById("apellidoModal").value.trim();
+      const cedula = document.getElementById("cedulaModal").value.trim();
+
+      //validar solo letras
+      const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$/;
+
+      // Validar nombres y apellidos
+      if (!soloLetras.test(nombre)) {
+        alert("El nombre solo puede contener letras");
+        document.getElementById("nombreModal").focus();
+        return;
+      }
+
+      if (!soloLetras.test(apellido)) {
+        alert("El apellido solo puede contener letras");
+        document.getElementById("apellidoModal").focus();
+        return;
+      }
+
+      if (cedulaValue.length < 7 || cedulaValue.length > 8) {
+        alert("Verifique que la cedula propuesta es correcta")
+        return
+      }
+
       const trabajador = {
         tname: document.getElementById("nombreModal").value,
         tapellido: document.getElementById("apellidoModal").value,
@@ -176,9 +205,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         if (response.ok) {
-          alert("Trabajador registrado");
-          document.getElementById("popup").hidePopover();
-          loadWorkers();
+          alert("Trabajador registrado con exito");
+          document.getElementById("registroForm").reset();
+          popup.style.display = "none"
+          await loadWorkers();
         }
       } catch (error) {
         console.error("Error registrando trabajador:", error);
@@ -232,15 +262,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("cerrarPopup").addEventListener("click", () => {
     popup.style.display = "none";
   });
-
-  // Ocultar al enviar el formulario
-  document
-    .getElementById("registroForm")
-    .addEventListener("submit", async (e) => {
-      e.preventDefault();
-      // ... resto del código
-      popup.style.display = "none";
-    });
 
   // Cerrar al hacer clic fuera del modal
   window.addEventListener("click", (e) => {

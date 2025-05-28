@@ -185,6 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Botón Guardar
   btnGuardar.addEventListener("click", async () => {
+
     if (!nombreInput.value.trim()) {
       alert("El nombre es obligatorio");
       nombreInput.focus();
@@ -215,8 +216,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+              //validar solo letras
+      const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+$/;
+
+      // Validar nombres y apellidos
+      if (!soloLetras.test(nombreInput.value)) {
+        alert("El nombre solo puede contener letras");
+        nombreInput.focus();
+        return;
+      }
+
+      if (!soloLetras.test(apellidoInput.value)) {
+        alert("El apellido solo puede contener letras");
+        apellidoInput.focus();
+        return;
+      }
+
+      if (cedulaInput.value.length < 7 || cedulaInput.value.length > 8) {
+        alert("Verifique que la cedula propuesta es correcta")
+        cedulaInput.focus();
+        return;
+      }
+
     const confirmacion = confirm("¿Guardar cambios?");
     if (!confirmacion) return;
+
 
     try {
       const updateData = {
