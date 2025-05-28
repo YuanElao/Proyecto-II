@@ -19,8 +19,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
       window.location.href =
         role === "admin"
-          ? "/views/admin/index.html"
-          : "/views/index.html";
+          ? "/views/admin/index.html"//"/frontend/views/admin/index.html"
+          : "/views/index.html"//"/frontend/views/index.html"
     }
   } catch (error) {
     console.error("Error:", error);

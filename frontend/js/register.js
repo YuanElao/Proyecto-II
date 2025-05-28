@@ -95,6 +95,48 @@ document.addEventListener("DOMContentLoaded", async () => {
           id_cargo: cargoSelect.value,
         };
 
+ // Validar campos vacíos
+  if (!trabajador.tname || !trabajador.tapellido || !trabajador.tcedula) {
+    alert("Todos los campos son obligatorios");
+    return;
+  }
+
+  // Validar departamento y cargo seleccionados
+  if (!trabajador.id_departamento) {
+    alert("Debe seleccionar un departamento");
+    departamentoSelect.focus();
+    return;
+  }
+
+  if (!trabajador.id_cargo) {
+    alert("Debe seleccionar un cargo");
+    cargoSelect.focus();
+    return;
+  }
+
+  // Validar solo letras en nombre y apellido
+  const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+
+  if (!soloLetras.test(trabajador.tname)) {
+    alert("El nombre solo puede contener letras y espacios");
+    document.getElementById("nombre").focus();
+    return;
+  }
+
+  if (!soloLetras.test(trabajador.tapellido)) {
+    alert("El apellido solo puede contener letras y espacios");
+    document.getElementById("apellido").focus();
+    return;
+  }
+
+  // Validar cédula (7-8 dígitos numéricos)
+  const soloNumeros = /^[0-9]+$/;
+  if (!soloNumeros.test(trabajador.tcedula) || trabajador.tcedula.length < 7 || trabajador.tcedula.length > 8) {
+    alert("La cédula debe contener entre 7 y 8 dígitos numéricos");
+    document.getElementById("cedula").focus();
+    return;
+  }
+
         try {
           const response = await fetch("http://localhost:3000/user/register", {
             method: "POST",
@@ -111,17 +153,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
           }
 
-          const data = await response.json();
+          
           if (response.ok) {
             document.getElementById("registroForm").reset();
             alert("Trabajador registrado exitosamente");
             console.log("Trabajador registrado exitosamente");
-          } else {
-            alert(data.message || "Error al registrar");
           }
         } catch (error) {
           console.error("Error:", error);
-          alert("Erroor de conexion");
+          alert("Error de conexion");
         }
       });
   } catch (error) {
