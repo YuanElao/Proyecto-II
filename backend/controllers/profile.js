@@ -2,38 +2,35 @@ const Trabajador = require("../models/trabajador");
 const Asistencia = require("../models/asistencias");
 const Falta = require("../models/faltas");
 const Permiso = require("../models/permisos");
-
 const QRCode = require("qrcode");
 
+// Objeto con métodos para manejar perfiles de trabajadores
 const getP = {
+  // Método para obtener perfil completo de un trabajador
   async profile(req, res) {
     const { cedula } = req.params;
 
     try {
-      //Obtener datos del trabajador
+      // Obtiene datos básicos del trabajador
       const trabajador = await Trabajador.obtainByCi(cedula);
       if (!trabajador) {
         return res.status(404).json({ message: "Trabajador no encontrado" });
       }
 
-      //Contadores: Asistencias, Faltas y Permisos
-
+      // Obtiene contadores de eventos
       const asistencias = await Asistencia.countAttendance(
         trabajador.id_trabajador
       );
-
       const faltas = await Falta.countFaults(trabajador.id_trabajador);
-
       const permisos = await Permiso.countPermission(trabajador.id_trabajador);
 
-      //Obtener eventos para el calendario (asistencias, faltas, permisos)
-
+      // Obtiene eventos para el calendario
       const calendario = await getP.calendar(trabajador.id_trabajador);
 
-      //Generar código QR del trabajador
+      // Genera código QR con el ID del trabajador
       const qrCode = await QRCode.toDataURL(trabajador.id_trabajador);
 
-      //Responder con los datos del perfil
+      // Retorna todos los datos estructurados
       return res.status(200).json({
         trabajador: {
           id_trabajador: trabajador.id_trabajador,
@@ -60,31 +57,37 @@ const getP = {
     }
   },
 
+  // Método para generar eventos de calendario
   async calendar(id_trabajador) {
     try {
+      // Obtiene fechas de asistencias, faltas y permisos
       const asistencias = await Asistencia.getDates(id_trabajador);
       const faltas = await Falta.getDates(id_trabajador);
       const permisos = await Permiso.getDates(id_trabajador);
 
+      // Combina todos los eventos en un solo array
       const eventos = [
+        // Mapea asistencias a eventos verdes
         ...asistencias.map((asistencia) => ({
           id: asistencia.id,
           title: "Asistencia",
           start: new Date(asistencia.fecha).toISOString(),
           color: "green",
         })),
+        // Mapea faltas a eventos rojos
         ...faltas.map((falta) => ({
           id: falta.id,
-          title: "Falta", //genera y concatena arrays de objetos, flatmap aplana todos los arrays de days en un unico array permiso resultante
+          title: "Falta",
           start: new Date(falta.fecha).toISOString(),
           color: "red",
         })),
+        // Mapea permisos (genera un evento por cada día)
         ...permisos.flatMap((permiso) => {
           const startDate = new Date(permiso.start);
           const endDate = new Date(permiso.end);
           const days = [];
 
-          // Generar un evento por cada día del permiso
+          // Genera eventos para cada día del permiso
           for (
             let d = new Date(startDate);
             d <= endDate;
