@@ -3,10 +3,10 @@ const Login = require("../models/login");
 const authentication = {};
 
 authentication.login = async (req, res) => {
-  const { name, password, role } = req.body;
+  const { name, password } = req.body;
 
   try {
-    const result = await Login.verifyUser({ name, password, role });
+    const result = await Login.verifyUser({ name, password });
 
     if (!result) {
       return res

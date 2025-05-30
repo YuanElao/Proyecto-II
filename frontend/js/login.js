@@ -3,13 +3,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
   const name = document.getElementById("name").value;
   const password = document.getElementById("password").value;
-  const role = document.getElementById("role").value;
+
 
   try {
     const response = await fetch("http://localhost:3000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, password, role }),
+      body: JSON.stringify({ name, password }),
     });
 
     const data = await response.json();
@@ -17,10 +17,35 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     if (response.ok) {
       sessionStorage.setItem("token", data.token);
 
-      window.location.href =
-        role === "admin"
-          ? "/views/admin/index.html"//"/frontend/views/admin/index.html"
-          : "/views/index.html"//"/frontend/views/index.html"
+      const token = sessionStorage.getItem("token");
+
+  // Extraer información del usuario del token
+  let currentUser;
+  try {
+    const payloadBase64 = token.split(".")[1];
+    const payloadJson = atob(
+      payloadBase64.replace(/-/g, "+").replace(/_/g, "/")
+    );
+    currentUser = JSON.parse(payloadJson);
+  } catch (e) {
+    console.error("Error decodificando token:", e);
+    alert("Sesión inválida");
+    sessionStorage.removeItem("token")
+    return;
+  }
+
+  // Verificar rol de admin
+  if (currentUser.role == "admin") {
+    window.location.href = "/frontend/views/admin/index.html";
+  } else {
+    window.location.href = "/frontend/views/index.html";
+  }
+
+  // /views/admin/index.html
+  // /views/index.html
+  // /frontend/views/admin/index.html
+  // /frontend/views/index.html
+ 
     }
   } catch (error) {
     console.error("Error:", error);

@@ -10,14 +10,14 @@ class Login {
   }
 
   // Método para verificar credenciales y generar token
-  async verifyUser({ name, password, role }) {
+  async verifyUser({ name, password }) {
     try {
       let result;
 
       // Busca el usuario en la base de datos
       result = await pool.query(
-        "SELECT * FROM login WHERE c_name = $1 AND c_password = $2 AND c_rol = $3",
-        [name, password, role]
+        "SELECT * FROM login WHERE c_name = $1 AND c_password = $2",
+        [name, password]
       );
 
       if (result.rows.length === 0) {
