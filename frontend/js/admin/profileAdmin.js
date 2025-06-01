@@ -372,6 +372,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Configurar botón de imprimir
   document.getElementById("qr").addEventListener("click", imprimirCredencial);
 
+  /*
   function generarCalendarioAnual(eventos) {
     const container = document.getElementById("calendarContainer");
     const añoActual = new Date().getFullYear();
@@ -442,7 +443,93 @@ document.addEventListener("DOMContentLoaded", async () => {
       container.appendChild(divMes);
     }
   }
+*/
 
+function generarCalendarioAnual(eventos) {
+  const container = document.getElementById("calendarContainer");
+  const añoActual = new Date().getFullYear();
+
+  container.innerHTML = "";
+
+  for (let mes = 0; mes < 12; mes++) {
+    const primerDia = new Date(añoActual, mes, 1);
+    const ultimoDia = new Date(añoActual, mes + 1, 0);
+
+    const primerDiaSemana = primerDia.getDay(); // 0=Domingo, 1=Lunes...
+    const diasEnMes = ultimoDia.getDate();
+
+    const divMes = document.createElement("div");
+    divMes.className = "mes-calendario";
+    divMes.innerHTML = `
+      <h3>${primerDia.toLocaleDateString("es-ES", { month: "long" })}</h3>
+      <div class="dias-semana">
+        ${["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
+          .map((d) => `<span>${d}</span>`)
+          .join("")}
+      </div>
+      <div class="dias-mes"></div>
+    `;
+
+    const diasDiv = divMes.querySelector(".dias-mes");
+    
+    // Añadir celdas vacías para días del mes anterior
+    for (let i = 0; i < primerDiaSemana; i++) {
+      const emptyDay = document.createElement("div");
+      emptyDay.className = "dia empty";
+      diasDiv.appendChild(emptyDay);
+    }
+
+    // Rellenar días del mes actual
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+      const diaElement = document.createElement("div");
+      diaElement.className = "dia";
+      diaElement.textContent = dia;
+      
+      // Formato de fecha 
+      const fechaISO = `${añoActual}-${(mes+1).toString().padStart(2,'0')}-${dia.toString().padStart(2,'0')}`;
+      diaElement.dataset.fecha = fechaISO;
+
+      // Buscar eventos para este día
+      const eventosDia = eventos.filter(e => {
+        // Extraer solo la parte de la fecha 
+        const fechaEvento = e.start.split('T')[0];
+        return fechaEvento === fechaISO;
+      });
+
+      if (eventosDia.length > 0) {
+        const evento = eventosDia[0];
+        diaElement.classList.add("evento");
+        
+        // Colores según tipo de evento
+        if (evento.title === "Asistencia") {
+          diaElement.style.color = "#28a745"; // Verde
+        } else if (evento.title === "Falta") {
+          diaElement.style.color = "#dc3545"; // Rojo
+        } else if (evento.title === "Permiso") {
+          diaElement.style.color = "#ffc107"; // Amarillo
+        }
+
+        // Tooltip
+        diaElement.title = evento.title + 
+          (evento.description ? `: ${evento.description}` : "");
+      }
+
+      // Evento click 
+      diaElement.addEventListener("click", (e) => {
+        const eventosDia = eventos.filter(e => e.start.startsWith(fechaISO));
+        if (eventosDia.length > 0) {
+          mostrarModalEdicion(eventosDia, fechaISO);
+        } else {
+          mostrarModalRegistro(fechaISO);
+        }
+      });
+
+      diasDiv.appendChild(diaElement);
+    }
+
+    container.appendChild(divMes);
+  }
+}
   // Función para mostrar modal de registro
   function mostrarModalRegistro(fecha) {
     fechaSeleccionada = fecha;

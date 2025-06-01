@@ -49,59 +49,82 @@ document.addEventListener("DOMContentLoaded", async () => {
     const calendario = data.calendario;
     generarCalendarioAnual(calendario);
 
-    // Agrega esta función al final del archivo:
-    function generarCalendarioAnual(eventos) {
-      const container = document.getElementById("calendarContainer");
-      const añoActual = new Date().getFullYear();
+   
 
-      for (let mes = 0; mes < 12; mes++) {
-        const primerDia = new Date(añoActual, mes, 1);
-        const ultimoDia = new Date(añoActual, mes + 1, 0);
+function generarCalendarioAnual(eventos) {
+  const container = document.getElementById("calendarContainer");
+  const añoActual = new Date().getFullYear();
 
-        const divMes = document.createElement("div");
-        divMes.className = "mes-calendario";
-        divMes.innerHTML = `
-                    <h3>${primerDia.toLocaleDateString("es-ES", {
-                      month: "long",
-                    })}</h3>
-                    <div class="dias-semana">
-                        ${["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
-                          .map((d) => `<span>${d}</span>`)
-                          .join("")}
-                    </div>
-                    <div class="dias-mes"></div>
-                `;
+  container.innerHTML = "";
 
-        const diasDiv = divMes.querySelector(".dias-mes");
-        const diasEnMes = ultimoDia.getDate();
+  for (let mes = 0; mes < 12; mes++) {
+    const primerDia = new Date(añoActual, mes, 1);
+    const ultimoDia = new Date(añoActual, mes + 1, 0);
 
-        // Rellenar días
-        for (let i = 1; i <= diasEnMes; i++) {
-          const dia = new Date(añoActual, mes, i);
-          const fechaISO = dia.toISOString().split("T")[0];
+    const divMes = document.createElement("div");
+    divMes.className = "mes-calendario";
+    divMes.innerHTML = `
+      <h3>${primerDia.toLocaleDateString("es-ES", { month: "long" })}</h3>
+      <div class="dias-semana">
+        ${["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
+          .map((d) => `<span>${d}</span>`)
+          .join("")}
+      </div>
+      <div class="dias-mes"></div>
+    `;
 
-          const diaElement = document.createElement("div");
-          diaElement.className = "dia";
-          diaElement.textContent = i;
+    const diasDiv = divMes.querySelector(".dias-mes");
+    const diasEnMes = ultimoDia.getDate();
+    const primerDiaSemana = primerDia.getDay(); // Día de la semana del primer día (0=Dom, 1=Lun...)
 
-          // Buscar eventos para este día
-          const eventosDia = eventos.filter((e) =>
-            e.start.startsWith(fechaISO)
-          );
-          if (eventosDia.length > 0) {
-            diaElement.classList.add("evento");
-            diaElement.style.color = eventosDia[0].color;
-            diaElement.title = eventosDia
-              .map((e) => `${e.title}: ${e.description || ""}`)
-              .join("\n");
-          }
+    // Añadir celdas vacías para alinear el primer día
+    for (let i = 0; i < primerDiaSemana; i++) {
+      const emptyDay = document.createElement("div");
+      emptyDay.className = "dia empty";
+      diasDiv.appendChild(emptyDay);
+    }
 
-          diasDiv.appendChild(diaElement);
+    // Rellenar días del mes
+    for (let dia = 1; dia <= diasEnMes; dia++) {
+      const diaElement = document.createElement("div");
+      diaElement.className = "dia";
+      diaElement.textContent = dia;
+      
+      // Formato de fecha simple (YYYY-MM-DD)
+      const fechaISO = `${añoActual}-${(mes+1).toString().padStart(2,'0')}-${dia.toString().padStart(2,'0')}`;
+      diaElement.dataset.fecha = fechaISO;
+
+      // Buscar eventos para este día (comparación directa)
+      const eventosDia = eventos.filter(e => {
+        // Extraer solo la parte de la fecha (ignorando hora y zona horaria)
+        const fechaEvento = e.start.split('T')[0];
+        return fechaEvento === fechaISO;
+      });
+
+      if (eventosDia.length > 0) {
+        const evento = eventosDia[0];
+        diaElement.classList.add("evento");
+        
+        // Asignar colores según tipo de evento
+        if (evento.title === "Asistencia") {
+          diaElement.style.color = "#28a745"; // Verde
+        } else if (evento.title === "Falta") {
+          diaElement.style.color = "#dc3545"; // Rojo
+        } else if (evento.title === "Permiso") {
+          diaElement.style.color = "#ffc107"; // Amarillo
         }
 
-        container.appendChild(divMes);
+        // Tooltip con información
+        diaElement.title = evento.title + 
+          (evento.description ? `: ${evento.description}` : "");
       }
+
+      diasDiv.appendChild(diaElement);
     }
+
+    container.appendChild(divMes);
+  }
+}
 
     // Configurar botón de imprimir
     document.getElementById("qr").addEventListener("click", imprimirCredencial);
