@@ -455,7 +455,7 @@ function generarCalendarioAnual(eventos) {
     const primerDia = new Date(añoActual, mes, 1);
     const ultimoDia = new Date(añoActual, mes + 1, 0);
 
-    const primerDiaSemana = primerDia.getDay(); // 0=Domingo, 1=Lunes...
+    const primerDiaSemana = (primerDia.getDay() + 6) % 7; // 0=Domingo, 1=Lunes...
     const diasEnMes = ultimoDia.getDate();
 
     const divMes = document.createElement("div");

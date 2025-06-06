@@ -37,6 +37,17 @@ cron.schedule( //Creamos un cronograma el cual se va a ejecutar a las 12:00 pm d
   }
 );
 
+cron.schedule(
+  "00 11 8 1 *",  // 1ero de enero, 2:00 AM
+  async () => {
+    console.log("Ejecutando backup automático anual...");
+    await backupController.runAutoBackup();
+  },
+  {
+    timezone: "America/Caracas",
+  }
+);
+
 //Middlewares, son aquellas capaz que agregan funcionalidades a las peticiones cuando estas son recibidas
 
 app.use(morgan("tiny")); //Informacion resumida de las peticiones
@@ -48,12 +59,13 @@ console.log(__dirname);
 
 
 //Con app.use aparte de usar middlewares tambien se usa para establecer las rutas
-//Rutas
 
+
+
+//Rutas
 app.use("/", require("./routes/auth.routes")); //ruta login
 
 //User
-
 app.use("/user", require("./routes/register.routes")); //ruta registro de trabajador
 app.use("/user", require("./routes/consult.routes")); //ruta consulta de trabajador
 app.use("/user", require("./routes/profile.routes")); //ruta perfil de trabajador
@@ -61,10 +73,10 @@ app.use("/user", require("./routes/profile.routes")); //ruta perfil de trabajado
 //app
 app.use("/app", require("./routes/qrAssist.routes")); //ruta de la aplicacion
 
+//Backup
+app.use("/admin", require("./routes/admin/backup.routes.js"));
 
 //Admin
-
-
 app.use("/admin", require("./routes/admin/permissions.routes")); //ruta de permisos
 app.use("/admin", require("./routes/admin/profileAdmin.routes")); //ruta de perfil del lado del administrador
 app.use("/admin", require("./routes/admin/job.routes.js")); //ruta de cargos

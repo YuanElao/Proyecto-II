@@ -75,7 +75,7 @@ function generarCalendarioAnual(eventos) {
 
     const diasDiv = divMes.querySelector(".dias-mes");
     const diasEnMes = ultimoDia.getDate();
-    const primerDiaSemana = primerDia.getDay(); // Día de la semana del primer día (0=Dom, 1=Lun...)
+    const primerDiaSemana = (primerDia.getDay() + 6) % 7; // Día de la semana del primer día (0=Dom, 1=Lun...)
 
     // Añadir celdas vacías para alinear el primer día
     for (let i = 0; i < primerDiaSemana; i++) {
