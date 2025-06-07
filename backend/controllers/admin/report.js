@@ -22,49 +22,62 @@ const report = {
     }
   },
 
-  async obtenerDatosReporte(req, res) {
+  async obtenerMesesDisponibles(req, res) {
     const { id_trabajador } = req.params;
-    const { tipo, anio, rango } = req.query;
+    const { anio } = req.params;
 
     try {
-      if (!id_trabajador) {
-        return res
-          .status(400)
-          .json({ message: "ID de trabajador es requerido" });
+      if (!id_trabajador || !anio) {
+        return res.status(400).json({ 
+          message: "ID de trabajador y año son requeridos" 
+        });
       }
 
-      // Preparar filtros
-      const filtros = { tipo };
+      const meses = await Reporte.obtenerMesesDisponibles(id_trabajador, parseInt(anio));
+      res.json(meses);
+    } catch (error) {
+      console.error("Error al obtener meses disponibles:", error);
+      res.status(500).json({ 
+        message: "Error al obtener meses",
+        error: error.message 
+      });
+    }
+  },
 
-      if (anio) {
-        filtros.anio = parseInt(anio);
 
-        // Si es el año actual y hay rango, procesarlo
-        const currentYear = new Date().getFullYear();
-        if (rango && parseInt(anio) === currentYear) {
-          const currentMonth = new Date().getMonth() + 1;
+  async obtenerDatosReporte(req, res) {
+    const { id_trabajador } = req.params;
+    const { anio, mesInicio, mesFin } = req.query;
 
-          switch (rango) {
-            case "mensual":
-              filtros.mes = currentMonth;
-              break;
-            case "trimestral":
-              filtros.trimestre = Math.ceil(currentMonth / 3);
-              break;
-            case "semestral":
-              filtros.semestre = Math.ceil(currentMonth / 6);
-              break;
-          }
-        }
+    try {
+      if (!id_trabajador || !anio) {
+        return res.status(400).json({ 
+          message: "ID de trabajador y año son requeridos" 
+        });
       }
 
-      const eventos = await Reporte.obtenerRecord(id_trabajador, filtros);
+      // Convertir a números y validar meses
+      const inicio = parseInt(mesInicio) || 0;
+      const fin = parseInt(mesFin) || 11;
+      
+      if (inicio < 0 || fin > 11 || inicio > fin) {
+        return res.status(400).json({ 
+          message: "Rango de meses inválido (0-11, mesInicio <= mesFin)" 
+        });
+      }
+
+      const eventos = await Reporte.obtenerRecord(id_trabajador, {
+        anio: parseInt(anio),
+        mesInicio: inicio,
+        mesFin: fin
+      });
+
       res.json(eventos);
     } catch (error) {
-      console.error("Error al obtener datos para reporte:", error);
-      res.status(500).json({
-        message: "Error al obtener datos para el reporte",
-        error: error.message,
+      console.error("Error al obtener datos:", error);
+      res.status(500).json({ 
+        message: "Error al generar el reporte",
+        error: error.message 
       });
     }
   },

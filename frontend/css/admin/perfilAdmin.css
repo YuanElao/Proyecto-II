@@ -478,6 +478,26 @@ button:active {
     margin-bottom: 10px;
 }
 
+.custom-select option:disabled {
+    color: #ccc;
+    font-style: italic;
+    background-color: #f8f9fa;
+}
+
+.meses-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+/* Estilo para el mensaje de "no hay datos" */
+.no-data-message {
+    color: #dc3545;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
 #btnGenerarReporte {
     padding: 12px 25px;
     background-color: #28a745;

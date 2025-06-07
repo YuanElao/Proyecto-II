@@ -1,427 +1,564 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Elementos del DOM
-  const tipoReporteSelect = document.getElementById("tipoReporte");
-  const recordOptionsDiv = document.getElementById("recordOptions");
-  const tipoRecordSelect = document.getElementById("tipoRecord");
-  const anioRecordSelect = document.getElementById("anioRecord");
-  const btnGenerarReporte = document.getElementById("btnGenerarReporte");
-  const reportContainer = document.getElementById("reportContainer");
+    // Elementos del DOM
+    const anioReporteSelect = document.getElementById("anioReporte");
+    const mesInicioSelect = document.getElementById("mesInicio");
+    const mesFinSelect = document.getElementById("mesFin");
+    const btnGenerarReporte = document.getElementById("btnGenerarReporte");
 
-  // Variables de estado
-  const token = sessionStorage.getItem("token");
-  const cedula = localStorage.getItem("cedulaActual");
-  let workerData = {};
+    // Variables de estado
+    const token = sessionStorage.getItem("token");
+    const cedula = localStorage.getItem("cedulaActual");
+    let workerData = {};
+    const monthCache = {};
 
-  // Validaciones iniciales
-  if (!token || !cedula) {
-    window.location.href = "../login.html";
-    return;
-  }
-
-  try {
-    // Cargar datos del trabajador
-    const workerResponse = await fetch(
-      `http://localhost:3000/user/profile/${cedula}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (!workerResponse.ok) {
-      throw new Error("Error al cargar datos del trabajador");
+    // Validar autenticación
+    if (!token || !cedula) {
+        window.location.href = "../login.html";
+        return;
     }
 
-    workerData = await workerResponse.json();
-    setupEventListeners();
-    loadAvailableYears(); // Cargar años disponibles
-  } catch (error) {
-    console.error("Error:", error);
-    alert(error.message);
-    window.location.href = "Consultar.html";
-  }
-
-  function setupEventListeners() {
-    // Cambio en tipo de reporte
-    tipoReporteSelect.addEventListener("change", (e) => {
-      const showRecordOptions = e.target.value === "record";
-      recordOptionsDiv.style.display = showRecordOptions ? "block" : "none";
-    });
-
-    // Botón Generar Reporte
-    btnGenerarReporte.addEventListener("click", generateHTMLReport);
-  }
-
-  async function loadAvailableYears() {
+    // Inicialización
     try {
-      const { id_trabajador } = workerData.trabajador;
-      const response = await fetch(
-        `http://localhost:3000/admin/report/${id_trabajador}/anios`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!response.ok) throw new Error("Error al obtener años disponibles");
-
-      const anios = await response.json();
-      anioRecordSelect.innerHTML = anios
-        .map(
-          (anio) =>
-            `<option value="${anio}" ${
-              anio === new Date().getFullYear() ? "selected" : ""
-            }>${anio}</option>`
-        )
-        .join("");
-    } catch (error) {
-      console.error("Error:", error);
-      alert(error.message);
-    }
-  }
-
-  async function generateHTMLReport() {
-    const { id_trabajador, nombre, apellido } = workerData.trabajador;
-    const tipoReporte = tipoReporteSelect.value;
-
-    // Determinar qué tipo de reporte generar
-    if (tipoReporte === "datos") {
-      await generateWorkerDataReport();
-      return;
-    }
-
-    // Si es record laboral
-    const tipoRecord = tipoRecordSelect.value;
-    const anio = anioRecordSelect.value;
-
-    try {
-      // Mostrar indicador de carga
-      btnGenerarReporte.disabled = true;
-      btnGenerarReporte.innerHTML =
-        '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
-
-      // Obtener datos del servidor
-      const params = new URLSearchParams({
-        tipo: tipoRecord,
-        anio: anio,
-      });
-
-      const response = await fetch(
-        `http://localhost:3000/admin/report/${id_trabajador}/data?${params}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(
-          error.message || "Error al obtener datos para el reporte"
+        // Cargar datos del trabajador
+        const workerResponse = await fetch(
+            `http://localhost:3000/user/profile/${cedula}`,
+            { headers: { Authorization: `Bearer ${token}` } }
         );
-      }
-
-      const eventos = await response.json();
-
-      // Llamar a la función correcta para generar el reporte
-      await generateRecordReport();
+        
+        if (!workerResponse.ok) throw new Error("Error al cargar datos del trabajador");
+        
+        workerData = await workerResponse.json();
+        await loadAvailableYears();
+        setupEventListeners();
+        
+        // Establecer meses iniciales (actual y diciembre por defecto)
+        const currentMonth = new Date().getMonth();
+        mesInicioSelect.value = currentMonth;
+        mesFinSelect.value = 11; // Diciembre
+        
     } catch (error) {
-      console.error("Error al generar reporte:", error);
-      alert("Error al generar reporte: " + error.message);
-    } finally {
-      btnGenerarReporte.disabled = false;
-      btnGenerarReporte.innerHTML =
-        '<i class="bx bx-file"></i> Generar Reporte';
+        console.error("Error inicializando reportes:", error);
+        alert(error.message);
+        window.location.href = "Consultar.html";
     }
-  }
 
-  async function generateWorkerDataReport() {
-    try {
-      btnGenerarReporte.disabled = true;
-      btnGenerarReporte.innerHTML =
-        '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
+    // Cargar años disponibles desde el backend
+    async function loadAvailableYears() {
+        try {
+            const { id_trabajador } = workerData.trabajador;
+            const response = await fetch(
+                `http://localhost:3000/admin/report/${id_trabajador}/anios`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
-      const { nombre, apellido } = workerData.trabajador;
+            if (!response.ok) throw new Error("Error al obtener años disponibles");
 
-      // Crear ventana de impresión directamente
-      const printWindow = window.open("", "_blank");
-      printWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Reporte de Trabajador - ${nombre} ${apellido}</title>
-                <style>
-                    @page { size: A4; margin: 1cm; }
-                    body { font-family: Arial, sans-serif; }
-                    .reporte-header { text-align: center; margin-bottom: 20px; }
-                    .datos-trabajador { margin: 0 auto; width: 80%; }
-                    .fila-dato { display: flex; margin-bottom: 10px; }
-                    .etiqueta { font-weight: bold; width: 150px; }
-                    .valor { flex-grow: 1; }
-                    .resumen { margin-top: 20px; text-align: center; }
-                    .contadores { display: flex; justify-content: center; gap: 20px; }
-                    @media print {
-                        body { -webkit-print-color-adjust: exact; }
-                        button { display: none; }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="reporte-header">
-                    <h2>Datos del Trabajador</h2>
-                    <p>Generado el: ${new Date().toLocaleDateString(
-                      "es-ES"
-                    )}</p>
-                </div>
-                <div class="datos-trabajador">
-                    <div class="fila-dato">
-                        <span class="etiqueta">Nombre:</span>
-                        <span class="valor">${nombre} ${apellido}</span>
-                    </div>
-                    <div class="fila-dato">
-                        <span class="etiqueta">Cédula:</span>
-                        <span class="valor">${
-                          workerData.trabajador.cedula
-                        }</span>
-                    </div>
-                    <div class="fila-dato">
-                        <span class="etiqueta">Departamento:</span>
-                        <span class="valor">${
-                          workerData.trabajador.departamento || "N/A"
-                        }</span>
-                    </div>
-                    <div class="fila-dato">
-                        <span class="etiqueta">Cargo:</span>
-                        <span class="valor">${
-                          workerData.trabajador.cargo || "N/A"
-                        }</span>
-                    </div>
-                </div>
+            const anios = await response.json();
+            anioReporteSelect.innerHTML = anios
+                .map(anio => `<option value="${anio}" ${anio === new Date().getFullYear() ? "selected" : ""}>${anio}</option>`)
+                .join("");
+
+
+            
+            await loadAvailableMonths(anioReporteSelect.value)
+
                 
-                <script>
-                    window.onload = function() {
-                        setTimeout(function() {
-                            window.print();
-                            window.close();
-                        }, 200);
-                    };
-                </script>
-            </body>
-            </html>
-        `);
-      printWindow.document.close();
-    } catch (error) {
-      throw error;
-    } finally {
-      btnGenerarReporte.disabled = false;
-      btnGenerarReporte.innerHTML =
-        '<i class="bx bx-file"></i> Generar Reporte';
-    }
-  }
-
-  async function generateRecordReport() {
-    try {
-      const { id_trabajador, nombre, apellido } = workerData.trabajador;
-      const tipoRecord = tipoRecordSelect.value;
-      const anio = anioRecordSelect.value;
-
-      btnGenerarReporte.disabled = true;
-      btnGenerarReporte.innerHTML =
-        '<i class="bx bx-loader bx-spin"></i> Generando Reporte...';
-
-      // Obtener datos del servidor
-      const params = new URLSearchParams({
-        tipo: tipoRecord,
-        anio: anio,
-      });
-
-      const response = await fetch(
-        `http://localhost:3000/admin/report/${id_trabajador}/data?${params}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+        } catch (error) {
+            console.error("Error cargando años:", error);
+            alert("Error al cargar años disponibles");
         }
-      );
+    }
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(
-          error.message || "Error al obtener datos para el reporte"
-        );
-      }
 
-      const eventos = await response.json();
+    async function loadAvailableMonths(anio) {
+    try {
+        const { id_trabajador } = workerData.trabajador;
+        console.log(`Cargando meses para trabajador: ${id_trabajador}, año: ${anio}`);
+        
+        // URL con timestamp para evitar caché
+        const url = `http://localhost:3000/admin/report/${id_trabajador}/meses/${anio}?_=${Date.now()}`;
+        
+        const response = await fetch(url, {
+            headers: { 
+                Authorization: `Bearer ${token}`,
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        });
 
-      // Crear ventana de impresión directamente
-      const printWindow = window.open("", "_blank");
-      printWindow.document.write(`
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Error en respuesta: ${response.status} - ${errorText}`);
+            throw new Error(`Error al obtener meses: ${response.status}`);
+        }
+
+        let mesesDisponibles = await response.json();
+        console.log("Meses disponibles recibidos:", mesesDisponibles);
+        
+        // Manejar caso de meses vacíos
+        if (!Array.isArray(mesesDisponibles)) {
+            console.warn("MesesDisponibles no es un array:", mesesDisponibles);
+            mesesDisponibles = [];
+        }
+        
+        // Ordenar meses y manejar caso sin datos
+        mesesDisponibles = mesesDisponibles
+            .map(m => parseInt(m))
+            .filter(m => !isNaN(m) && m >= 0 && m < 12)
+            .sort((a, b) => a - b);
+        
+        if (mesesDisponibles.length === 0) {
+            console.log("No hay meses disponibles para este año");
+            showNoDataMessage();
+            return;
+        }
+
+        // Actualizar caché de meses y selects
+        monthCache[anio] = mesesDisponibles;
+        updateMonthSelects(mesesDisponibles);
+        
+    } catch (error) {
+        console.error("Error en loadAvailableMonths:", error);
+        showNoDataMessage();
+        // Mostrar error al usuario
+        alert(`Error al cargar meses: ${error.message}`);
+    }
+}
+
+
+    function updateMonthSelects(mesesDisponibles) {
+        const monthNames = [
+            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        ];
+
+        // Limpiar selects
+        mesInicioSelect.innerHTML = '';
+        mesFinSelect.innerHTML = '';
+
+        // Poblar selects
+        monthNames.forEach((name, index) => {
+            const isAvailable = mesesDisponibles.includes(index);
+            
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = name;
+            option.disabled = !isAvailable;
+            
+            mesInicioSelect.appendChild(option.cloneNode(true));
+            mesFinSelect.appendChild(option);
+        });
+
+        // Establecer valores por defecto
+        mesInicioSelect.value = mesesDisponibles[0];
+        mesFinSelect.value = mesesDisponibles[mesesDisponibles.length - 1];
+    }
+
+    function showNoDataMessage() {
+        const noDataMsg = document.createElement('p');
+        noDataMsg.textContent = 'No hay datos disponibles para este año';
+        noDataMsg.style.color = '#dc3545';
+        noDataMsg.style.marginTop = '10px';
+        
+        // Limpiar selects
+        mesInicioSelect.innerHTML = '';
+        mesFinSelect.innerHTML = '';
+        
+        // Insertar mensaje después del contenedor de meses
+        document.querySelector('.meses-container').appendChild(noDataMsg);
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+        btnGenerarReporte.addEventListener("click", generatePDFReport);
+        
+        // Validar rango de meses automáticamente
+        mesInicioSelect.addEventListener("change", () => {
+            if (parseInt(mesInicioSelect.value) > parseInt(mesFinSelect.value)) {
+                mesFinSelect.value = mesInicioSelect.value;
+            }
+        });
+        
+        mesFinSelect.addEventListener("change", () => {
+            if (parseInt(mesFinSelect.value) < parseInt(mesInicioSelect.value)) {
+                mesInicioSelect.value = mesFinSelect.value;
+            }
+        });
+
+        anioReporteSelect.addEventListener("change", () => {
+        const selectedYear = anioReporteSelect.value;
+        loadAvailableMonths(selectedYear);
+    });
+    }
+
+    // Función principal para generar el PDF
+    async function generatePDFReport() {
+        const { id_trabajador, nombre, apellido, departamento, cargo } = workerData.trabajador;
+        const anio = anioReporteSelect.value;
+        const mesInicio = parseInt(mesInicioSelect.value);
+        const mesFin = parseInt(mesFinSelect.value);
+
+        try {
+            // Mostrar estado de carga
+            btnGenerarReporte.disabled = true;
+            btnGenerarReporte.innerHTML = '<i class="bx bx-loader bx-spin"></i> Generando...';
+
+            // Obtener datos del backend
+            const params = new URLSearchParams({
+                anio: anio,
+                mesInicio: mesInicio,
+                mesFin: mesFin
+            });
+
+            const response = await fetch(
+                `http://localhost:3000/admin/report/${id_trabajador}/data?${params}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || "Error al generar el reporte");
+            }
+
+            const eventos = await response.json();
+
+            // Crear ventana de impresión
+            const printWindow = window.open("", "_blank");
+            printWindow.document.write(`
             <!DOCTYPE html>
             <html>
             <head>
-                <title>Record Laboral - ${nombre} ${apellido}</title>
-                <link rel="stylesheet" href="../../css/admin/calendarioAdmin.css">
+                <title>Reporte ${nombre} ${apellido}</title>
+                <script src="../../extra/chart.umd.js"></script>
                 <style>
-                    @page { 
-                        size: letter landscape;
-                        margin: 0.5cm;
-                    }
                     body { 
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                        padding: 10px;
-                        font-size: 0.9rem;
+                        font-family: Arial, sans-serif; 
+                        padding: 10px 15px; 
+                        color: #333;
+                        -webkit-print-color-adjust: exact;
                     }
-                    .reporte-header { 
+                    .header { 
                         text-align: center; 
-                        margin-bottom: 20px;
-                        page-break-after: avoid;
+                        margin-bottom: 10px;
+                        padding-bottom: 8px;
+                        border-bottom: 1px solid #ddd;
                     }
-                    #calendarContainer {
-                        display: grid;
-                        grid-template-columns: repeat(3, 1fr);
-                        gap: 15px;
-                        padding: 15px;
-                    }
-                    .mes-calendario {
-                        page-break-inside: avoid;
-                        break-inside: avoid;
-                        tranform: scale(0.95)
-                        tranform-origin: top left:
-                    }
-                    .leyenda {
+                    .info-trabajador {
                         display: flex;
                         justify-content: center;
-                        gap: 20px;
-                        margin-top: 20px;
-                        font-size: 0.9rem;
-                        page-break-before: avoid;
+                        flex-wrap: wrap;
+                        gap: 15px;
+                        margin: 8px 0;
+                        font-size: 0.85rem;
                     }
-                    .leyenda span {
-                        display: inline-block;
-                        width: 12px;
-                        height: 12px;
-                        border-radius: 50%;
-                        margin-right: 5px;
+                    .charts-container {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                        margin: 15px 0;
                     }
-                    .color-asistencia { background: #28a745; }
-                    .color-falta { background: #dc3545; }
-                    .color-permiso { background: #ffc107; }
+                    .chart-wrapper {
+                        width: 100%;
+                        margin-bottom: 10px;
+                        page-break-inside: avoid;
+                    }
+
+                    .pie-container {
+                        width: 80%;
+                        margin: 0 auto;
+                        max-width: 400px
+                        }
+
+                    .chart-title {
+                        text-align: center;
+                        font-size: 13px;
+                        margin-bottom: 5px;
+                        font-weight: bold;
+                        color: #2c3e50;
+                    }
+                    canvas { 
+                        width: 100% !important;
+                        height: 220px !important;
+                        max-width: 100%;
+                        max-height: 220px;
+                    }
+                    .resumen { 
+                        background: #f8f9fa; 
+                        padding: 10px; 
+                        border-radius: 4px;
+                        margin-top: 10px;
+                        page-break-inside: avoid;
+                        font-size: 0.85rem;
+                        border: 1px solid #e0e0e0;
+                    }
+                    .resumen h3 {
+                        margin-top: 0;
+                        margin-bottom: 8px;
+                        color: #2c3e50;
+                        font-size: 1rem;
+                        text-align: center;
+                    }
+                    .resumen p {
+                        display: flex;
+                        justify-content: space-between;
+                        margin: 5px 0;
+                        padding: 0 5px;
+                    }
+                    .resumen strong {
+                        color: #2c3e50;
+                    }
+                    @page { 
+                        size: letter portrait; 
+                        margin: 10mm;
+                    }
                     @media print {
-                        body { -webkit-print-color-adjust: exact; }
+                        body { 
+                            padding: 0;
+                            font-size: 9pt;
+                        }
+                        .header h1 {
+                            font-size: 16pt;
+                            margin-bottom: 4px;
+                        }
+                        .header h2 {
+                            font-size: 13pt;
+                            margin-top: 0;
+                            margin-bottom: 8px;
+                        }
+                        .header p {
+                            margin: 5px 0;
+                            font-size: 10pt;
+                        }
+
+                        .pie-container {
+                            width: 70%
+                            max-width: 350px}
+
+                        canvas {
+                            height: 200px !important;
+                        }
+                        .chart-wrapper {
+                            margin-bottom: 5px;
+                        }
                     }
                 </style>
             </head>
             <body>
-                <div class="reporte-header">
-                    <h2>Record Laboral - ${nombre} ${apellido}</h2>
-                    <div class = "info-trabajador">
-                      <div><strong>Departamento:</strong>${workerData.trabajador.departamento}</div>
-                      <div><strong>Cargo:</strong>${workerData.trabajador.cargo}</div>
+                <div class="header">
+                    <h1>Reporte Laboral</h1>
+                    <h2>${nombre} ${apellido}</h2>
+                    <div class="info-trabajador">
+                        <div><strong>Departamento:</strong> ${departamento || 'N/A'}</div>
+                        <div><strong>Cargo:</strong> ${cargo || 'N/A'}</div>
                     </div>
-                    <p>Año: ${anio} | Tipo: ${
-        tipoRecord === "general"
-          ? "General"
-          : tipoRecord === "asistencias"
-          ? "Asistencias"
-          : tipoRecord === "faltas"
-          ? "Faltas"
-          : "Permisos"
-      }</p>
-                    <p>Generado el: ${new Date().toLocaleDateString(
-                      "es-ES"
-                    )}</p>
+                    <p><strong>Período:</strong> ${getMonthNames(mesInicio, mesFin)} ${anio}</p>
                 </div>
-                
-                <div id="calendarContainer">
-                    ${generateCalendarHTML(anio, eventos)}
+
+                <div class="charts-container">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Eventos por Mes</div>
+                        <canvas id="graficaBarras"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Distribución Total</div>
+                        <div class= "pie-container">
+                        <canvas id="graficaPastel"></canvas>
+                    </div>
                 </div>
-                
-                <div class="leyenda">
-                    <div><span class="color-asistencia"></span> Asistencia</div>
-                    <div><span class="color-falta"></span> Falta</div>
-                    <div><span class="color-permiso"></span> Permiso</div>
-                </div>
-                
+
+                <div class="resumen" id="resumenEstadistico"></div>
+
                 <script>
+                    // Datos para las gráficas
+                    const eventos = ${JSON.stringify(eventos)};
+                    const anio = ${anio};
+                    const mesInicio = ${mesInicio};
+                    const mesFin = ${mesFin};
+
+                    // Procesar datos para gráficas
+                    function procesarDatos() {
+                        const meses = [];
+                        const datos = {
+                            asistencias: [],
+                            faltas: [],
+                            permisos: []
+                        };
+
+                        for (let mes = mesInicio; mes <= mesFin; mes++) {
+                            const eventosMes = eventos.filter(e => {
+                                const fecha = new Date(e.start);
+                                return fecha.getFullYear() == anio && fecha.getMonth() == mes;
+                            });
+
+                            meses.push(new Date(anio, mes, 1).toLocaleString('es-ES', { month: 'short' }));
+                            datos.asistencias.push(eventosMes.filter(e => e.tipo === 'Asistencia').length);
+                            datos.faltas.push(eventosMes.filter(e => e.tipo === 'Falta').length);
+                            datos.permisos.push(eventosMes.filter(e => e.tipo === 'Permiso').length);
+                        }
+
+                        return { meses, datos };
+                    }
+
+                    // Generar gráficas optimizadas para impresión
+                    function generarGraficas() {
+                        const { meses, datos } = procesarDatos();
+                        const totales = {
+                            asistencias: datos.asistencias.reduce((a, b) => a + b, 0),
+                            faltas: datos.faltas.reduce((a, b) => a + b, 0),
+                            permisos: datos.permisos.reduce((a, b) => a + b, 0)
+                        };
+
+                        // Gráfica de barras optimizada
+                        new Chart(
+                            document.getElementById('graficaBarras').getContext('2d'),
+                            {
+                                type: 'bar',
+                                data: {
+                                    labels: meses,
+                                    datasets: [
+                                        { 
+                                            label: 'Asistencias', 
+                                            data: datos.asistencias, 
+                                            backgroundColor: '#28a745',
+                                            borderColor: '#218838',
+                                            borderWidth: 1
+                                        },
+                                        { 
+                                            label: 'Faltas', 
+                                            data: datos.faltas, 
+                                            backgroundColor: '#dc3545',
+                                            borderColor: '#c82333',
+                                            borderWidth: 1
+                                        },
+                                        { 
+                                            label: 'Permisos', 
+                                            data: datos.permisos, 
+                                            backgroundColor: '#ffc107',
+                                            borderColor: '#e0a800',
+                                            borderWidth: 1
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        title: { display: false },
+                                        legend: { 
+                                            position: 'top',
+                                            labels: { 
+                                                font: { 
+                                                    size: 9,
+                                                    family: 'Arial'
+                                                },
+                                                boxWidth: 12
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        y: { 
+                                            beginAtZero: true,
+                                            title: { 
+                                                display: true, 
+                                                text: 'Cantidad', 
+                                                font: { size: 9 } 
+                                            },
+                                            ticks: { 
+                                                font: { size: 8 },
+                                                stepSize: 1
+                                            }
+                                        },
+                                        x: {
+                                            ticks: { 
+                                                font: { size: 8 },
+                                                maxRotation: 45,
+                                                minRotation: 45
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        );
+
+                        // Gráfica de pastel optimizada
+                        new Chart(
+                            document.getElementById('graficaPastel').getContext('2d'),
+                            {
+                                type: 'pie',
+                                data: {
+                                    labels: ['Asistencias', 'Faltas', 'Permisos'],
+                                    datasets: [{
+                                        data: [totales.asistencias, totales.faltas, totales.permisos],
+                                        backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    aspectRatio: 1.5,
+                                    plugins: {
+                                        title: { display: false },
+                                        legend: { 
+                                            position: 'bottom',
+                                            labels: { 
+                                                font: { 
+                                                    size: 9,
+                                                    family: 'Arial'
+                                                },
+                                                boxWidth: 12
+                                            }
+                                        },
+                                        tooltip: {
+                                            bodyFont: { size: 9 }
+                                        }
+                                    }
+                                }
+                            }
+                        );
+
+                        // Actualizar resumen
+                        document.getElementById('resumenEstadistico').innerHTML = \`
+                            <h3>Resumen Estadístico</h3>
+                            <p><strong>Total Asistencias:</strong> \${totales.asistencias}</p>
+                            <p><strong>Total Faltas:</strong> \${totales.faltas}</p>
+                            <p><strong>Total Permisos:</strong> \${totales.permisos}</p>
+                            <p><strong>Porcentaje de Asistencia:</strong> \${((totales.asistencias / (totales.asistencias + totales.faltas)) * 100 || 0).toFixed(2)}%</p>
+                        \`;
+                    }
+
+                    // Iniciar al cargar la ventana
                     window.onload = function() {
-                        setTimeout(function() {
+                        generarGraficas();
+                        setTimeout(() => {
                             window.print();
-                            window.close();
-                        }, 200);
+                            window.onafterprint = function() {
+                                window.close();
+                            };
+                        }, 1200); // Tiempo suficiente para renderizar
                     };
                 </script>
             </body>
             </html>
         `);
-      printWindow.document.close();
-    } catch (error) {
-      throw error;
-    } finally {
-      btnGenerarReporte.disabled = false;
-      btnGenerarReporte.innerHTML =
-        '<i class="bx bx-file"></i> Generar Reporte';
-    }
-  }
+            printWindow.document.close();
 
-  function generateCalendarHTML(anio, eventos) {
-    return Array.from({ length: 12 }, (_, mes) => {
-      const primerDia = new Date(anio, mes, 1);
-      const ultimoDia = new Date(anio, mes + 1, 0);
-      const nombreMes = primerDia.toLocaleDateString("es-ES", {
-        month: "long",
-      });
-
-      let diasHTML = "";
-      for (let i = 1; i <= ultimoDia.getDate(); i++) {
-        const fechaISO = new Date(anio, mes, i).toISOString().split("T")[0];
-        const eventosDia = eventos.filter((e) => e.start.startsWith(fechaISO));
-
-        let claseDia = "dia";
-        let estiloDia = "";
-        let tooltip = "";
-
-        if (eventosDia.length > 0) {
-          const evento = eventosDia[0];
-          claseDia += " evento";
-
-          // Estilo según tipo de evento
-          if (evento.tipo === "Asistencia") {
-            estiloDia = "color: #28a745;"; // Verde
-          } else if (evento.tipo === "Falta") {
-            estiloDia = "color: #dc3545;"; // Rojo
-          } else if (evento.tipo === "Permiso") {
-            estiloDia = "color: #ffc107;"; // Amarillo
-          }
-
-          // Tooltip mejorado para permisos
-          if (evento.tipo === "Permiso") {
-            const permiso = eventos.find((e) => e.id === evento.id && e.motivo);
-            tooltip = `title="Permiso: ${
-              permiso?.motivo || "Sin motivo especificado"
-            }"`;
-          } else {
-            tooltip = `title="${evento.tipo}${
-              evento.hora ? " - Hora: " + evento.hora : ""
-            }"`;
-          }
+        } catch (error) {
+            console.error("Error generando reporte:", error);
+            alert("Error al generar reporte: " + error.message);
+        } finally {
+            btnGenerarReporte.disabled = false;
+            btnGenerarReporte.innerHTML = '<i class="bx bx-printer"></i> Generar PDF';
         }
+    }
 
-        diasHTML += `<div class="${claseDia}" style="${estiloDia}" ${tooltip}>${i}</div>`;
-      }
-
-      return `
-            <div class="mes-calendario">
-                <h3>${nombreMes}</h3>
-                <div class="dias-semana">
-                    ${["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"]
-                      .map((d) => `<span>${d}</span>`)
-                      .join("")}
-                </div>
-                <div class="dias-mes">${diasHTML}</div>
-            </div>
-        `;
-    }).join("");
-  }
+    // Función auxiliar para obtener nombres de meses
+    function getMonthNames(start, end) {
+        const months = [];
+        for (let i = start; i <= end; i++) {
+            months.push(new Date(0, i).toLocaleString('es-ES', { month: 'long' }));
+        }
+        return months.join(" - ");
+    }
 });

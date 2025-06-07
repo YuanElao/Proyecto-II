@@ -8,6 +8,8 @@ router.get("/report/:id_trabajador/anios",authenticateJWT('admin'), report.obten
 
 router.get("/report/:id_trabajador/data",authenticateJWT('admin'), report.obtenerDatosReporte);
 
+router.get("/report/:id_trabajador/meses/:anio",authenticateJWT('admin'), report.obtenerMesesDisponibles);
+
 // Nueva ruta para obtener años generales
 router.get("/report/anios-generales", authenticateJWT('admin'), report.obtenerAniosGenerales);
 
