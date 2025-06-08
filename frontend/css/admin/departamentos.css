@@ -150,7 +150,8 @@ table {
   border: 1px solid #2a4a7f;
   width: 100%;
   max-width: 500px;
-
+  border-collapse: separate;
+  border-spacing: 0;
   margin-bottom: 30px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -180,7 +181,7 @@ th {
 }
 
 td {
-  padding: 15px;
+  padding: 8px 15px;
   border-bottom: 1px solid #333;
   font-size: 0.95rem;
   text-align: left;
@@ -188,6 +189,7 @@ td {
 }
 
 tr {
+  height: 40px;
   transition: background-color 0.3s ease;
 }
 
@@ -236,12 +238,12 @@ tbody tr:nth-child(even):hover {
   background: #0b5ed7;
 }
 
-.enlace:last-child {
-  background: #dc3545;
+.enlace.reporte-dep {
+  background: #28a745; 
 }
 
-.enlace:last-child:hover {
-  background: #bb2d3b;
+.enlace.eliminar-dep {
+  background: #dc3545;
 }
 
 /* =========== MODALES =========== */

@@ -94,6 +94,33 @@
             <button class="crear" id="btnGuardarCar">Guardar</button>
         </div>
     </div>
+
+        <div id="modalReporteDepartamento" class="modal">
+        <div class="modal-contenido" style="max-width: 600px;">
+            <span class="cerrar">&times;</span>
+            <h3>Reporte de Departamento</h3>
+            
+            <div class="reporte-form">
+                <div class="input-group">
+                    <label for="anioReporteDepto">Año:</label>
+                    <select id="anioReporteDepto" class="seleccionable1"></select>
+                </div>
+
+                <div class="input-group">
+                    <label>Rango de meses:</label>
+                    <div class="meses-container" style="display: flex; align-items: center; gap: 10px;">
+                        <select id="mesInicioDepto" class="custom-select"></select>
+                        <span>a</span>
+                        <select id="mesFinDepto" class="custom-select"></select>
+                    </div>
+                </div>
+
+                <button id="btnGenerarReporteDepto" class="crear">
+                    <i class="bx bx-printer"></i> Generar Reporte
+                </button>
+            </div>
+        </div>
+    </div>
     <script src="../../extra/indexAjustes.js"></script>
     <script src="../../extra/notifyScript.js"></script>
     <script src="../../js/admin/departamentos.js"></script>

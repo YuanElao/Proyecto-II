@@ -10,6 +10,13 @@ router.get("/report/:id_trabajador/data",authenticateJWT('admin'), report.obtene
 
 router.get("/report/:id_trabajador/meses/:anio",authenticateJWT('admin'), report.obtenerMesesDisponibles);
 
+
+router.get("/report/departamento/:departamento/anios", authenticateJWT('admin'), report.obtenerAniosDepartamento);
+
+router.get("/report/departamento/:departamento/meses/:anio", authenticateJWT('admin'), report.obtenerMesesDepartamento);
+
+router.get("/report/departamento/:departamento/data", authenticateJWT('admin'), report.obtenerDatosDepartamento);
+
 // Nueva ruta para obtener años generales
 router.get("/report/anios-generales", authenticateJWT('admin'), report.obtenerAniosGenerales);
 

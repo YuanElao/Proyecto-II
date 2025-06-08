@@ -82,6 +82,52 @@ const report = {
     }
   },
 
+  // Métodos para reportes de departamento
+async obtenerAniosDepartamento(req, res) {
+    const { departamento } = req.params;
+
+    try {
+        const anios = await Reporte.obtenerAniosPorDepartamento(departamento);
+        res.json(anios);
+    } catch (error) {
+        console.error("Error al obtener años del departamento:", error);
+        res.status(500).json({ message: "Error al obtener años", error: error.message });
+    }
+},
+
+async obtenerMesesDepartamento(req, res) {
+    const { departamento, anio } = req.params;
+
+    try {
+        const meses = await Reporte.obtenerMesesPorDepartamento(departamento, parseInt(anio));
+        res.json(meses);
+    } catch (error) {
+        console.error("Error al obtener meses del departamento:", error);
+        res.status(500).json({ message: "Error al obtener meses", error: error.message });
+    }
+},
+
+async obtenerDatosDepartamento(req, res) {
+    const { departamento } = req.params;
+    const { anio, mesInicio, mesFin } = req.query;
+
+    try {
+        const inicio = parseInt(mesInicio) || 0;
+        const fin = parseInt(mesFin) || 11;
+        
+        const eventos = await Reporte.obtenerRecordDepartamento(departamento, {
+            anio: parseInt(anio),
+            mesInicio: inicio,
+            mesFin: fin
+        });
+
+        res.json(eventos);
+    } catch (error) {
+        console.error("Error al obtener datos del departamento:", error);
+        res.status(500).json({ message: "Error al generar reporte", error: error.message });
+    }
+  },
+
   // Obtener años generales
   async obtenerAniosGenerales(req, res) {
     try {
