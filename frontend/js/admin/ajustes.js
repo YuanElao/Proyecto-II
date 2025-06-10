@@ -78,7 +78,6 @@ document.addEventListener('DOMContentLoaded', function() {
     async function crearBackupManual() {
         const btn = document.getElementById('btn-crear-backup');
         const originalText = btn.innerHTML;
-        
         btn.disabled = true;
         btn.innerHTML = '<i class="bx bx-loader-circle bx-spin"></i> Creando respaldo...';
         
@@ -101,7 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert(data.message || `Respaldo creado correctamente`);
                 
             }
-       
+       await delay(8000)
+       mostrarBackups()
            
 
 

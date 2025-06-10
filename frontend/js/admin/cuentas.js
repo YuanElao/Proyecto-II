@@ -41,6 +41,11 @@ document.addEventListener("DOMContentLoaded", async function () {
   const toggleFormBtn = document.getElementById("toggleFormBtn");
   const formContainer = document.getElementById("formContainer");
 
+  const itemsPorPagina = 5; // Puedes ajustar este número
+let paginaActualCuentas = 1;
+let todosCuentas = [];
+
+
   // Configurar select de roles según permisos
   roleSelect.innerHTML = `
         <option value="" disabled selected>Tipo de Cuenta</option>
@@ -205,6 +210,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
+  function paginar(array, pagina, itemsPorPagina) {
+    const inicio = (pagina -1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    return array.slice(inicio, fin);
+  }
+
+  function actualizarControlesPaginacion(totalItem) {
+    const totalPaginas = Math.ceil(totalItem / itemsPorPagina);
+    const paginaActualElement = document.querySelector('.pagina-actual[data-tabla="cuentas"]');
+    const btnAnterior = document.querySelector('.paginacion-btn[data-tabla="cuentas"][data-accion="anterior"]');
+    const btnSiguiente = document.querySelector('.paginacion-btn[data-tabla="cuentas"][data-accion="siguiente"]');
+
+
+    if (paginaActualElement) paginaActualElement.textContent = paginaActualCuentas;
+    if (btnAnterior) btnAnterior.disabled = paginaActualCuentas <= 1;
+    if (btnSiguiente) btnSiguiente.disabled = paginaActualCuentas >= totalPaginas;
+  }
+
   // Función para cargar y mostrar las cuentas
   async function loadAccounts() {
     try {
@@ -217,9 +240,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (!response.ok) throw new Error("Error al obtener cuentas");
 
       const accounts = await response.json();
+      todosCuentas = accounts;
 
-      // Renderizar cuentas
-      tbody.innerHTML = "";
+const cuentasPagina = paginar(accounts, paginaActualCuentas, itemsPorPagina)
+renderAccounts(cuentasPagina)
+
+actualizarControlesPaginacion(accounts.length);
+
+      
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  function renderAccounts(accounts) {
+    tbody.innerHTML = "";
       accounts.forEach((account) => {
         const isAdminAccount = account.c_rol === "admin";
         const canModify = isRootAdmin || !isAdminAccount;
@@ -257,10 +292,25 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         tbody.appendChild(tr);
       });
-    } catch (error) {
-      alert(error.message);
-    }
   }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.paginacion-btn')) return;
+
+    const boton = e.target.closest('.paginacion-btn');
+    const tabla = boton.dataset.tabla;
+    const accion = boton.dataset.accion;
+
+    if (tabla === 'cuentas') {
+      if (accion === 'anterior' && paginaActualCuentas > 1) {
+        paginaActualCuentas--;
+      } else if (accion === 'siguiente' && paginaActualCuentas < Math.ceil(todosCuentas.length / itemsPorPagina)) {
+        paginaActualCuentas++;
+      }
+      renderAccounts(paginar(todosCuentas, paginaActualCuentas, itemsPorPagina));
+      actualizarControlesPaginacion(todosCuentas.length)
+    }
+  })
 
   // Manejar envío del formulario
   form.addEventListener("submit", async function (e) {

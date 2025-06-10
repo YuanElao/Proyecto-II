@@ -189,6 +189,25 @@ body {
 }
 
 /* =========== TABLA DE CUENTAS =========== */
+.tabla-container {
+    background: #1e1e1e;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid #2a4a7f;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 30px;
+    margin: 0 auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+}
+
+.tabla-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: #3b82f6;
+}
 .accounts-table-container {
     background: #1e1e1e;
     border-radius: 12px;
@@ -235,7 +254,45 @@ body {
 .accounts-table tr:nth-child(even):hover {
     background-color: #2d2d2d;
 }
+/* =========== PAGINACIÓN =========== */
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    padding: 10px 0;
+}
 
+.paginacion-btn {
+    padding: 8px 12px;
+    background: #1e3a8a;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.paginacion-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.paginacion-btn:disabled {
+    background: #6b7280;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagina-actual {
+    font-weight: 600;
+    color: #e4e6eb;
+    min-width: 30px;
+    text-align: center;
+}
 /* =========== BOTONES DE ACCIÓN =========== */
 .action-btn {
     background: transparent;
