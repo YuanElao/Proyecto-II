@@ -12,14 +12,14 @@ if (!fs.existsSync(backupDir)) {
   fs.mkdirSync(backupDir, { recursive: true });
 }
 
-const backupController = {
-  async createBackup(req, res) {
-    try {
-      const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
-      const fileName = `backup_${timestamp}.sql`;
-      const filePath = path.join(backupDir, fileName);
+// Función para procesar el backup (ahora está fuera del objeto)
+async function processBackupAsync() {
+  try {
+    const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
+    const fileName = `backup_${timestamp}.sql`;
+    const filePath = path.join(backupDir, fileName);
 
-      const command = `pg_dump -U ${user} -h ${host} -p ${port} -d ${database} \
+    const command = `pg_dump -U ${user} -h ${host} -p ${port} -d ${database} \
 --format=plain \
 --create \
 --clean \
@@ -30,21 +30,42 @@ const backupController = {
 --verbose \
 -f "${filePath}"`;
 
-      console.log(`Iniciando respaldo: ${filePath}`);
+    console.log(`Iniciando respaldo en segundo plano: ${filePath}`);
 
-      exec(command, { env: { ...process.env, PGPASSWORD: password } }, (error) => {
+    await new Promise((resolve, reject) => {
+      exec(command, { env: { ...process.env, PGPASSWORD: password } }, (error, stdout, stderr) => {
         if (error) {
           console.error('Error en respaldo:', error.message);
-          return res.status(400).json({ message: `Error al crear respaldo: ${error.message}` });
+          console.error('Stderr:', stderr);
+          return reject(new Error(`Error al crear respaldo: ${error.message}`));
         }
-
         console.log(`Respaldo completado: ${fileName}`);
-        res.status(201).json({ message: `Respaldo creado exitosamente`, data: {name: fileName} });
+        resolve();
+      });
+    });
+
+    console.log(`Respaldo ${fileName} completado exitosamente en segundo plano`);
+    return { success: true, fileName };
+  } catch (error) {
+    console.error('Error en processBackupAsync:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+const backupController = {
+  async createBackup(req, res) {
+    try {
+      // Responder inmediatamente con 202 Accepted
+      res.status(202).json({ 
+        message: 'Solicitud de respaldo recibida, procesando en segundo plano...',
+        status: 'processing'
       });
 
+      // Procesar el backup en segundo plano
+      processBackupAsync();
     } catch (error) {
       console.error('Error en createBackup:', error);
-      res.status(400).json({ message: `Error al iniciar el respaldo: ${error.message}` });
+      res.status(500).json({ message: error.message });
     }
   },
 

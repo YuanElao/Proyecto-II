@@ -96,13 +96,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(errorData.message || 'Error al crear backups');
             }
             
-            const data = await response.json();
-            alert(data.message || `Respaldo creado correctamente`);
-            cargarBackups();
+            if(response.ok) {
+                const data = await response.json();
+                alert(data.message || `Respaldo creado correctamente`);
+                
+            }
+       
+           
+
+
+            
         } catch (error) {
             console.error('Error:', error);
             alert(error.message || 'Error al crear respaldo. Verifica tu conexión.');
-        } finally {
+        }  finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
