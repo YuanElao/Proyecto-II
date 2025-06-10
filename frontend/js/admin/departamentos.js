@@ -15,6 +15,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   let departamentoReporteId = null;
   let departamentoReporteNombre = null;
 
+  // Variables para paginación
+const itemsPorPagina = 5; 
+let paginaActualDepartamentos = 1;
+let paginaActualCargos = 1;
+let todosDepartamentos = [];
+let todosCargos = [];
+
   // Cargar datos iniciales
   const loadData = async () => {
     await loadDepartamentos();
@@ -24,31 +31,89 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Cargar departamentos
   const loadDepartamentos = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:3000/admin/department/list",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await response.json();
-      renderDepartamentos(data);
+        const response = await fetch("http://localhost:3000/admin/department/list", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        todosDepartamentos = data;
+        renderDepartamentos(paginar(data, paginaActualDepartamentos, itemsPorPagina));
+        actualizarControlesPaginacion('departamentos', data.length);
     } catch (error) {
-      console.error("Error cargando departamentos:", error);
+        console.error("Error cargando departamentos:", error);
     }
-  };
+};
 
   // Cargar cargos
   const loadCargos = async () => {
     try {
-      const response = await fetch("http://localhost:3000/admin/job/list", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      renderCargos(data);
+        const response = await fetch("http://localhost:3000/admin/job/list", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        todosCargos = data;
+        renderCargos(paginar(data, paginaActualCargos, itemsPorPagina));
+        actualizarControlesPaginacion('cargos', data.length);
     } catch (error) {
-      console.error("Error cargando cargos:", error);
+        console.error("Error cargando cargos:", error);
     }
-  };
+};
+
+function paginar(array, pagina, itemsPorPagina) {
+    const inicio = (pagina - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    return array.slice(inicio, fin);
+}
+
+function actualizarControlesPaginacion(tabla, totalItems) {
+    const totalPaginas = Math.ceil(totalItems / itemsPorPagina);
+    let paginaActual;
+    
+    if (tabla === 'departamentos') {
+        paginaActual = paginaActualDepartamentos;
+        document.querySelector(`.pagina-actual[data-tabla="departamentos"]`).textContent = paginaActual;
+        
+        // Habilitar/deshabilitar botones
+        document.querySelector(`.paginacion-btn[data-tabla="departamentos"][data-accion="anterior"]`)
+            .disabled = paginaActual <= 1;
+        document.querySelector(`.paginacion-btn[data-tabla="departamentos"][data-accion="siguiente"]`)
+            .disabled = paginaActual >= totalPaginas;
+    } else {
+        paginaActual = paginaActualCargos;
+        document.querySelector(`.pagina-actual[data-tabla="cargos"]`).textContent = paginaActual;
+        
+        // Habilitar/deshabilitar botones
+        document.querySelector(`.paginacion-btn[data-tabla="cargos"][data-accion="anterior"]`)
+            .disabled = paginaActual <= 1;
+        document.querySelector(`.paginacion-btn[data-tabla="cargos"][data-accion="siguiente"]`)
+            .disabled = paginaActual >= totalPaginas;
+    }
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.paginacion-btn')) return;
+    
+    const boton = e.target.closest('.paginacion-btn');
+    const tabla = boton.dataset.tabla;
+    const accion = boton.dataset.accion;
+    
+    if (tabla === 'departamentos') {
+        if (accion === 'anterior' && paginaActualDepartamentos > 1) {
+            paginaActualDepartamentos--;
+        } else if (accion === 'siguiente' && paginaActualDepartamentos < Math.ceil(todosDepartamentos.length / itemsPorPagina)) {
+            paginaActualDepartamentos++;
+        }
+        renderDepartamentos(paginar(todosDepartamentos, paginaActualDepartamentos, itemsPorPagina));
+        actualizarControlesPaginacion('departamentos', todosDepartamentos.length);
+    } else if (tabla === 'cargos') {
+        if (accion === 'anterior' && paginaActualCargos > 1) {
+            paginaActualCargos--;
+        } else if (accion === 'siguiente' && paginaActualCargos < Math.ceil(todosCargos.length / itemsPorPagina)) {
+            paginaActualCargos++;
+        }
+        renderCargos(paginar(todosCargos, paginaActualCargos, itemsPorPagina));
+        actualizarControlesPaginacion('cargos', todosCargos.length);
+    }
+});
 
   // Renderizar departamentos (con botón de reporte)
   const renderDepartamentos = (departamentos) => {
@@ -348,6 +413,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!response.ok) throw new Error("Error al obtener años");
       
       const anios = await response.json();
+
+      
+
       const anioSelect = document.getElementById("anioReporteDepto");
       anioSelect.innerHTML = anios.map(anio => 
         `<option value="${anio}">${anio}</option>`
@@ -397,16 +465,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         mesFin.innerHTML += option;
       });
       
-      // Establecer valores por defecto
-      mesInicio.value = 0;
-      mesFin.value = 11;
-      
+
     } catch (error) {
       console.error("Error cargando meses:", error);
       alert("Error al cargar meses disponibles");
     }
   }
 
+  
   // Función para generar el reporte
   document.getElementById("btnGenerarReporteDepto").addEventListener("click", async () => {
     const anio = document.getElementById("anioReporteDepto").value;
@@ -456,6 +522,20 @@ document.addEventListener("DOMContentLoaded", async () => {
           <title>Reporte ${nombreDepto}</title>
           <script src="../../extra/chart.umd.js"></script>
           <style>
+                .encabezado {
+                width: 75%;
+                margin-bottom: 5px;
+                margin-left: 100px;
+
+            }
+                .encabezado-img {
+                width: 75%;
+                max-height: 120px;
+                object-fit: contain;
+                margin-left: 100px;
+
+            }
+
               body { 
                   font-family: Arial, sans-serif; 
                   padding: 10px 15px; 
@@ -566,6 +646,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           </style>
       </head>
       <body>
+
+           <div class="encabezado" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <img src="../../img/membrete.png" 
+         style="max-width: 80%; height: auto; max-height: 100px;">
+    <div class="fecha-generacion" style="text-align: center; font-size: 10px; color: #555; margin-top: 5px;">
+        Generado el ${new Date().toLocaleDateString('es-ES', {day: 'numeric', month: 'long', year: 'numeric'})}
+    </div>
+    <div style="border-top: 1px solid #003366; width: 100%; margin: 8px 0;"></div>
+</div>
           <div class="header">
               <h1>Reporte de Departamento</h1>
               <h2>${nombreDepto}</h2>

@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
     // Elementos del DOM
+    const tipoReporteSelect = document.getElementById("tipoReporte");
+    const datosPersonalesContainer = document.getElementById("datosPersonalesContainer");
+    const recordLaboralContainer = document.getElementById("recordLaboralContainer");
+    const btnGenerarDatosPersonales = document.getElementById("btnGenerarDatosPersonales");
+  
     const anioReporteSelect = document.getElementById("anioReporte");
     const mesInicioSelect = document.getElementById("mesInicio");
     const mesFinSelect = document.getElementById("mesFin");
@@ -28,6 +33,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!workerResponse.ok) throw new Error("Error al cargar datos del trabajador");
         
         workerData = await workerResponse.json();
+
         await loadAvailableYears();
         setupEventListeners();
         
@@ -54,6 +60,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) throw new Error("Error al obtener años disponibles");
 
             const anios = await response.json();
+
+            if (anios.length === 0) {
+            // Bloquear Record Laboral si no hay años
+            document.getElementById("recordLaboralContainer").style.display = "none";
+            document.getElementById("tipoReporte").value = "datosPersonales";
+            document.getElementById("tipoReporte").disabled = true;
+            showNoDataMessage("No hay datos disponibles para generar reportes laborales");
+            return;
+        }
+
             anioReporteSelect.innerHTML = anios
                 .map(anio => `<option value="${anio}" ${anio === new Date().getFullYear() ? "selected" : ""}>${anio}</option>`)
                 .join("");
@@ -150,10 +166,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             mesFinSelect.appendChild(option);
         });
 
-        // Establecer valores por defecto
+        if (mesesDisponibles.length > 0) {
         mesInicioSelect.value = mesesDisponibles[0];
         mesFinSelect.value = mesesDisponibles[mesesDisponibles.length - 1];
+        btnGenerarReporte.disabled = false;
+    } else {
+        btnGenerarReporte.disabled = true;
+        showNoDataMessage("No hay meses disponibles para el año seleccionado");
     }
+}
+
 
     function showNoDataMessage() {
         const noDataMsg = document.createElement('p');
@@ -171,25 +193,191 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Configurar event listeners
     function setupEventListeners() {
+
+                // Cambio de tipo de reporte
+        tipoReporteSelect.addEventListener("change", (e) => {
+            if (e.target.value === "datosPersonales") {
+                datosPersonalesContainer.style.display = "block";
+                recordLaboralContainer.style.display = "none";
+            } else {
+                datosPersonalesContainer.style.display = "none";
+                recordLaboralContainer.style.display = "block";
+                loadAvailableYears();
+            }
+        });
+
+        // Botón para generar reporte de datos personales
+        btnGenerarDatosPersonales.addEventListener("click", generatePersonalDataPDF);
+
+
         btnGenerarReporte.addEventListener("click", generatePDFReport);
         
         // Validar rango de meses automáticamente
         mesInicioSelect.addEventListener("change", () => {
-            if (parseInt(mesInicioSelect.value) > parseInt(mesFinSelect.value)) {
-                mesFinSelect.value = mesInicioSelect.value;
-            }
-        });
+    const mesInicio = parseInt(mesInicioSelect.value);
+    const mesFin = parseInt(mesFinSelect.value);
+    
+    if (mesInicio > mesFin) {
+        mesFinSelect.value = mesInicio;
+    }
+    validateGenerateButton();
+});
         
         mesFinSelect.addEventListener("change", () => {
-            if (parseInt(mesFinSelect.value) < parseInt(mesInicioSelect.value)) {
-                mesInicioSelect.value = mesFinSelect.value;
-            }
-        });
+    const mesInicio = parseInt(mesInicioSelect.value);
+    const mesFin = parseInt(mesFinSelect.value);
+    
+    if (mesFin < mesInicio) {
+        mesInicioSelect.value = mesFin;
+    }
+    validateGenerateButton();
+});
 
         anioReporteSelect.addEventListener("change", () => {
         const selectedYear = anioReporteSelect.value;
         loadAvailableMonths(selectedYear);
     });
+    }
+
+    function validateGenerateButton() {
+    const mesInicio = parseInt(mesInicioSelect.value);
+    const mesFin = parseInt(mesFinSelect.value);
+    
+    // Verificar si los meses seleccionados están disponibles
+    const mesInicioDisabled = mesInicioSelect.options[mesInicioSelect.selectedIndex].disabled;
+    const mesFinDisabled = mesFinSelect.options[mesFinSelect.selectedIndex].disabled;
+    
+    btnGenerarReporte.disabled = mesInicioDisabled || mesFinDisabled;
+}
+
+    async function generatePersonalDataPDF() {
+        const { nombre, apellido, cedula, departamento, cargo, qr_code } = workerData.trabajador;
+
+        try {
+            // Mostrar estado de carga
+            btnGenerarDatosPersonales.disabled = true;
+            btnGenerarDatosPersonales.innerHTML = '<i class="bx bx-loader bx-spin"></i> Generando...';
+
+            // Crear ventana de impresión
+            const printWindow = window.open("", "_blank");
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Datos Personales - ${nombre} ${apellido}</title>
+                    <style>
+
+                                    
+                            .encabezado {
+                            width: 75%;
+                            margin-bottom: 5px;
+                            margin-left: 100px;
+
+                        }
+                            .encabezado-img {
+                            width: 75%;
+                            max-height: 120px;
+                            object-fit: contain;
+                            margin-left: 100px;
+
+                        }
+
+                        body { 
+                            font-family: Arial, sans-serif; 
+                            padding: 20px;
+                            color: #333;
+                            -webkit-print-color-adjust: exact;
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                            padding-bottom: 10px;
+                            border-bottom: 1px solid #ddd;
+                        }
+                        .datos-container {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 15px;
+                            margin-bottom: 20px;
+                        }
+                        .dato-item {
+                            margin-bottom: 10px;
+                        }
+                        .dato-item strong {
+                            display: inline-block;
+                            width: 120px;
+                        }
+                        .qr-container {
+                            text-align: center;
+                            margin-top: 20px;
+                        }
+                        .qr-image {
+                            width: 150px;
+                            height: 150px;
+                            margin: 0 auto;
+                        }
+                        .fecha-generacion {
+                            text-align: right;
+                            font-size: 12px;
+                            color: #666;
+                            margin-top: 20px;
+                        }
+                        @page {
+                            size: letter portrait;
+                            margin: 10mm;
+                        }
+                    </style>
+                </head>
+                <body>
+                <div class="encabezado" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <img src="../../img/membrete.png" 
+         style="max-width: 80%; height: auto; max-height: 100px;">
+    <div style="border-top: 1px solid #003366; width: 100%; margin: 8px 0;"></div>
+</div>
+                    <div class="header">
+                        <h1>Datos Personales</h1>
+                        <h2>${nombre} ${apellido}</h2>
+                    </div>
+
+                    <div class="datos-container">
+                        <div class="dato-item"><strong>Nombre:</strong> ${nombre}</div>
+                        <div class="dato-item"><strong>Apellido:</strong> ${apellido}</div>
+                        <div class="dato-item"><strong>Cédula:</strong> ${cedula}</div>
+                        <div class="dato-item"><strong>Departamento:</strong> ${departamento || 'N/A'}</div>
+                        <div class="dato-item"><strong>Cargo:</strong> ${cargo || 'N/A'}</div>
+                    </div>
+
+                    <div class="qr-container">
+                        <img src="${qr_code}" class="qr-image" alt="Código QR">
+                        <p>Código QR de identificación</p>
+                    </div>
+
+                    <div class="fecha-generacion">
+                        Generado el ${new Date().toLocaleDateString('es-ES', {day: 'numeric', month: 'long', year: 'numeric'})}
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            setTimeout(() => {
+                                window.print();
+                                window.onafterprint = function() {
+                                    window.close();
+                                };
+                            }, 500);
+                        };
+                    </script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+
+        } catch (error) {
+            console.error("Error generando reporte de datos personales:", error);
+            alert("Error al generar reporte: " + error.message);
+        } finally {
+            btnGenerarDatosPersonales.disabled = false;
+            btnGenerarDatosPersonales.innerHTML = '<i class="bx bx-printer"></i> Generar Reporte';
+        }
     }
 
     // Función principal para generar el PDF
@@ -232,6 +420,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <title>Reporte ${nombre} ${apellido}</title>
                 <script src="../../extra/chart.umd.js"></script>
                 <style>
+
+                .encabezado {
+                width: 75%;
+                margin-bottom: 5px;
+                margin-left: 100px;
+
+            }
+                .encabezado-img {
+                width: 75%;
+                max-height: 120px;
+                object-fit: contain;
+                margin-left: 100px;
+
+            }
+
                     body { 
                         font-family: Arial, sans-serif; 
                         padding: 10px 15px; 
@@ -345,6 +548,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </style>
             </head>
             <body>
+           <div class="encabezado" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <img src="../../img/membrete.png" 
+         style="max-width: 80%; height: auto; max-height: 100px;">
+    <div class="fecha-generacion" style="text-align: center; font-size: 10px; color: #555; margin-top: 5px;">
+        Generado el ${new Date().toLocaleDateString('es-ES', {day: 'numeric', month: 'long', year: 'numeric'})}
+    </div>
+    <div style="border-top: 1px solid #003366; width: 100%; margin: 8px 0;"></div>
+</div>
                 <div class="header">
                     <h1>Reporte Laboral</h1>
                     <h2>${nombre} ${apellido}</h2>

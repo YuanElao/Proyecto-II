@@ -43,7 +43,9 @@
         </div>
 
         <!-- Tablas -->
+         
         <div class="tablas">
+            <div class="tabla-container">
             <!-- Tabla Departamentos -->
             <table id="data-table">
                 <caption>Departamentos</caption>
@@ -54,9 +56,21 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
+                
             </table>
+            <div class="paginacion">
+    <button class="enlace paginacion-btn" data-tabla="departamentos" data-accion="anterior">
+        <i class="bi bi-chevron-left"></i> Anterior
+    </button>
+    <span class="pagina-actual" data-tabla="departamentos">1</span>
+    <button class="enlace paginacion-btn" data-tabla="departamentos" data-accion="siguiente">
+        Siguiente <i class="bi bi-chevron-right"></i>
+    </button>
+</div>
+</div>
 
             <!-- Tabla Cargos -->
+             <div class="tabla-container">
             <table id="data-table2">
                 <caption>Cargos</caption>
                 <thead>
@@ -67,8 +81,19 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
+                
             </table>
-        </div>
+            <div class="paginacion">
+    <button class="enlace paginacion-btn" data-tabla="cargos" data-accion="anterior">
+        <i class="bi bi-chevron-left"></i> Anterior
+    </button>
+    <span class="pagina-actual" data-tabla="departamentos">1</span>
+    <button class="enlace paginacion-btn" data-tabla="cargos" data-accion="siguiente">
+        Siguiente <i class="bi bi-chevron-right"></i>
+    </button>
+</div>
+</div>
+</div>
         
 
     </main>
