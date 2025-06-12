@@ -70,12 +70,13 @@
         </div>
     </main>
     <script>
-        window.addEventListener("load", () => {
-            if(!sessionStorage.getItem("token")) {
-                alert('Debes iniciar sesion para acceder a la pagina');
-                window.location.replace ('/frontend/views/login.html');
-            }
-        })
+        const token = sessionStorage.getItem("token");
+
+  if (!token) {
+    alert("Debes iniciar sesion para acceder a la pagina");
+    window.location.href = "/frontend/views/login.html";
+    return;
+  }
     </script>
     <script src="../js/logout.js"></script>
     <script src="../extra/notifyScript.js"></script>

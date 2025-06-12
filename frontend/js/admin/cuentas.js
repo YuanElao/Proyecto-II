@@ -148,7 +148,7 @@ let todosCuentas = [];
       return;
       }
 
-      if (newPassword.length < 5 ) {
+      if (newPassword && newPassword.length < 5 ) {
       alert("La contraseña debe contener 5 caracteres o mas");
       return;
       }

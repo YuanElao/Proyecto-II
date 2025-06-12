@@ -56,8 +56,10 @@
         
     </main>
    <script>
-        const token = sessionStorage.getItem("token");
+       const token = sessionStorage.getItem("token");
+
   if (!token) {
+    alert("Debes iniciar sesion para acceder a la pagina");
     window.location.href = "/frontend/views/login.html";
     return;
   }

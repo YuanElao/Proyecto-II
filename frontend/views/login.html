@@ -35,5 +35,29 @@
   
 
 <script src="../js/login.js"></script>
+<script>
+  (function() {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      try {
+        const payloadBase64 = token.split(".")[1];
+        const payloadJson = atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/"));
+        const currentUser = JSON.parse(payloadJson);
+        
+        // Redirige según el rol, usando replace()
+        if (currentUser.role === "admin") {
+          window.location.replace("/frontend/views/admin/index.html");
+        } else {
+          window.location.replace("/frontend/views/index.html");
+        }
+      } catch (e) {
+        // Si el token es inválido, lo elimina para permitir un nuevo login
+        console.error("Token inválido, se requiere nuevo inicio de sesión:", e);
+        sessionStorage.removeItem("token");
+      }
+    }
+  })();
+</script>
+
 </body>
 </html>

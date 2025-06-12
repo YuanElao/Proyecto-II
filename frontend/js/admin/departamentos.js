@@ -284,33 +284,56 @@ document.addEventListener('click', (e) => {
 
   // Eliminar elementos
   document.addEventListener("click", async (e) => {
-    if (
-      !e.target.classList.contains("eliminar-dep") &&
-      !e.target.classList.contains("eliminar-car")
-    )
-      return;
+  if (
+    !e.target.classList.contains("eliminar-dep") &&
+    !e.target.classList.contains("eliminar-car")
+  )
+    return;
 
-    const confirmacion = prompt('Escriba "confirmar" para proceder:');
-    if (confirmacion?.toLowerCase() !== "confirmar") {
-      alert("Acción cancelada");
-      return;
-    }
+  const confirmacion = prompt('Escriba "eliminar" para proceder:');
+  if (confirmacion?.toLowerCase() !== "eliminar") {
+    alert("Acción cancelada");
+    return;
+  }
 
-    const isDep = e.target.classList.contains("eliminar-dep");
-    const id = e.target.closest("tr").dataset.id;
-    const endpoint = isDep ? `/admin/department/${id}` : `/admin/job/${id}`;
+  const isDep = e.target.classList.contains("eliminar-dep");
+  const id = e.target.closest("tr").dataset.id;
+  const endpoint = isDep ? `/admin/department/${id}` : `/admin/job/${id}`;
 
-    try {
-      const response = await fetch(`http://localhost:3000${endpoint}`, {
-        method: "DELETE",
+  try {
+    // Primero verificar si hay trabajadores asociados
+    const params = isDep 
+      ? new URLSearchParams({ departamento: id })
+      : new URLSearchParams({ cargo: id });
+    
+    const workersResponse = await fetch(
+      `http://localhost:3000/user/consult/worker?${params}`,
+      {
         headers: { Authorization: `Bearer ${token}` },
-      });
+      }
+    );
 
-      if (response.ok) await loadData();
-    } catch (error) {
-      console.error("Error eliminando:", error);
+    const workers = await workersResponse.json();
+
+    if (workers.length > 0) {
+      alert("No se puede eliminar porque hay trabajadores asociados");
+      return;
     }
-  });
+
+    // Si no hay trabajadores, proceder con la eliminación
+    const response = await fetch(`http://localhost:3000${endpoint}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      alert("Eiminacion Exitosa");
+      await loadData()};
+  } catch (error) {
+    console.error("Error eliminando:", error);
+    alert("Error al intentar eliminar: " + error.message);
+  }
+});
 
   // Cerrar modales
   document.querySelectorAll(".cerrar").forEach((btn) => {
