@@ -70,15 +70,24 @@
         </div>
     </main>
     <script>
-        const token = sessionStorage.getItem("token");
+        
 
-  if (!token) {
-    alert("Debes iniciar sesion para acceder a la pagina");
+  // Prevenir navegación hacia atrás
+window.history.pushState(null, "", window.location.href);
+window.onpopstate = function() {
+  sessionStorage.removeItem("token");
+  window.location.href = "/frontend/views/login.html";
+};
+
+// Manejar caché del navegador
+window.addEventListener("pageshow", function(event) {
+  if (event.persisted) {
+    sessionStorage.removeItem("token");
     window.location.href = "/frontend/views/login.html";
-    return;
   }
+});
     </script>
     <script src="../js/logout.js"></script>
-    <script src="../extra/notifyScript.js"></script>
+    <script src="../extra/notifyScript.js" defer></script>
 </body>
 </html>
