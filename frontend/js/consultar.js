@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.getElementById("tableBody");
   const token = sessionStorage.getItem("token");
 
+  const itemsPorPagina = 10;
+  let paginaActual = 1;
+  let todosTrabajadores = [];
+
   //Cargar departamentos
   const loadDepartment = async () => {
     try {
@@ -83,18 +87,46 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.href = "/frontend/views/login.html";
         return;
       }
-      const trabajadores = await response.json();
-      updateTable(trabajadores);
+
+      todosTrabajadores = await response.json();
+      actualizarTabla(); // <-- Solo llamamos a actualizarTabla aquí
+    
+      // Eliminar esta línea que causaba el error
+      // updateTable(trabajadores);
     } catch (error) {
       console.error("Error:", error);
       tableBody.innerHTML = `<tr><td colspan="5">Error cargando datos</td></tr>`;
     }
   };
 
+  const actualizarControlesPaginacion = () => {
+    const totalPaginas = Math.ceil(todosTrabajadores.length / itemsPorPagina);
+    const paginaActualElement = document.querySelector('.pagina-actual');
+    const [btnAnterior, btnSiguiente] = document.querySelectorAll('.paginacion-btn');
+
+    paginaActualElement.textContent = paginaActual;
+    btnAnterior.disabled = paginaActual <= 1;
+    btnSiguiente.disabled = paginaActual >= totalPaginas;
+  };
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.paginacion-btn')) {
+      const accion = e.target.closest('.paginacion-btn').dataset.accion;
+      
+      if (accion === 'anterior' && paginaActual > 1) {
+        paginaActual--;
+      } else if (accion === 'siguiente' && paginaActual < Math.ceil(todosTrabajadores.length / itemsPorPagina)) {
+        paginaActual++;
+      }
+      
+      actualizarTabla();
+    }
+  });
+
   // Event listener para cambio de departamento
   departamentoFilter.addEventListener("change", async (e) => {
     const idDepartamento = e.target.value;
-    jobFilter.disabled = !idDepartamento; // Habilitar solo si hay departamento
+    jobFilter.disabled = !idDepartamento;
 
     if (idDepartamento) {
       await loadCargos(idDepartamento);
@@ -125,8 +157,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const trabajadores = await response.json();
-    updateTable(trabajadores);
+    todosTrabajadores = await response.json();
+    paginaActual = 1; // Resetear a la primera página al aplicar nuevos filtros
+    actualizarTabla();
   };
 
   searchInput.addEventListener("input", (e) => {
@@ -135,22 +168,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       await updateFilters();
     }, 1000);
   });
-  departamentoFilter.addEventListener("input", updateFilters);
 
   document.getElementById("data-table").addEventListener("click", (e) => {
     const fila = e.target.closest("tr");
     if (!fila || fila.parentNode.tagName !== "TBODY") return;
 
     const cedula = fila.cells[2].textContent.trim();
-
-    // Guardar la cédula en localStorage
     localStorage.setItem("cedulaActual", cedula);
-
-    // Redirigir sin parámetros en la URL
     window.location.href = "perfil.html";
   });
-  const updateTable = (trabajadores) => {
-    tableBody.innerHTML = trabajadores.map(
+
+  const actualizarTabla = () => {
+    const inicio = (paginaActual - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    const trabajadoresPagina = todosTrabajadores.slice(inicio, fin);
+
+    tableBody.innerHTML = trabajadoresPagina.map(
       (t) => `
             <tr>
                 <td>${t.nombre}</td>
@@ -160,6 +193,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${t.cargo}</td>
             </tr>`
     ).join('');
+
+    actualizarControlesPaginacion();
   };
 
   await loadDepartment();

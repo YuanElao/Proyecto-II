@@ -56,12 +56,11 @@
         
     </main>
    <script>
-        window.addEventListener("load", () => {
-            if(!sessionStorage.getItem("token")) {
-                alert('Debes iniciar sesion para acceder a la pagina');
-                window.location.href = '/frontend/views/login.html';
-            }
-        })
+        const token = sessionStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/frontend/views/login.html";
+    return;
+  }
     </script>
     <script src="../../extra/indexAjustes.js"></script>
     <script src="../../extra/notifyScript.js"></script>

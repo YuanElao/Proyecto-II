@@ -87,7 +87,7 @@ app.use("/admin", require("./routes/admin/report.routes.js")); //ruta de reporte
 
 //Ajustes
 
-app.set("port", 3000); //establecemos el puerto que usara express
+app.set("port", 3000, '0.0.0.0'); //establecemos el puerto que usara express
 
 app.listen(app.get("port"), () => { //se inicia un servidor web el cual escuchara peticiones en este caso localhost y el puerto establecido
   console.log("Server on Port " + app.get("port")); //mensaje en la consola quue muestra el puerto donde esta alojado el servidor

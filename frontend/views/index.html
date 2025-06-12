@@ -73,7 +73,7 @@
         window.addEventListener("load", () => {
             if(!sessionStorage.getItem("token")) {
                 alert('Debes iniciar sesion para acceder a la pagina');
-                window.location.href = '/frontend/views/login.html';
+                window.location.replace ('/frontend/views/login.html');
             }
         })
     </script>

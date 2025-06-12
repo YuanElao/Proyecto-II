@@ -57,7 +57,7 @@ const backupController = {
     try {
       // Responder inmediatamente con 202 Accepted
       res.status(202).json({ 
-        message: 'Solicitud de respaldo recibida, procesando en segundo plano...',
+        message: 'Solicitud de respaldo recibida, procesando en segundo plano, espere a que se refresque la pagina',
         status: 'processing'
       });
 

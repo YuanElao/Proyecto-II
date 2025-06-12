@@ -1,6 +1,11 @@
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const token = sessionStorage.getItem("token");
+  if (token) {
+    sessionStorage.removeItem("token")
+    return;
+  }
   const name = document.getElementById("name").value;
   const password = document.getElementById("password").value;
 
@@ -14,10 +19,17 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     const data = await response.json();
 
+    if(!response.ok) {
+        alert("El usuario o la contraseña son incorrectos");
+        return
+      }
+
     if (response.ok) {
       sessionStorage.setItem("token", data.token);
 
       const token = sessionStorage.getItem("token");
+
+    
 
   // Extraer información del usuario del token
   let currentUser;

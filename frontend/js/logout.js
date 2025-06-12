@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sessionStorage.removeItem("token");
 
-      window.location.href = "/views/login.html";
+      window.location.href = "/frontend/views/login.html";
 
       
     });

@@ -43,7 +43,7 @@
         </div>
 
         <!-- Tablas -->
-         
+        
         <div class="tablas">
             <div class="tabla-container">
             <!-- Tabla Departamentos -->
@@ -59,18 +59,18 @@
                 
             </table>
             <div class="paginacion">
-    <button class="enlace paginacion-btn" data-tabla="departamentos" data-accion="anterior">
+    <button class="paginacion-btn" data-tabla="departamentos" data-accion="anterior">
         <i class="bi bi-chevron-left"></i> Anterior
     </button>
     <span class="pagina-actual" data-tabla="departamentos">1</span>
-    <button class="enlace paginacion-btn" data-tabla="departamentos" data-accion="siguiente">
+    <button class="paginacion-btn" data-tabla="departamentos" data-accion="siguiente">
         Siguiente <i class="bi bi-chevron-right"></i>
     </button>
 </div>
 </div>
 
             <!-- Tabla Cargos -->
-             <div class="tabla-container">
+            <div class="tabla-container">
             <table id="data-table2">
                 <caption>Cargos</caption>
                 <thead>
@@ -84,11 +84,11 @@
                 
             </table>
             <div class="paginacion">
-    <button class="enlace paginacion-btn" data-tabla="cargos" data-accion="anterior">
+    <button class="paginacion-btn" data-tabla="cargos" data-accion="anterior">
         <i class="bi bi-chevron-left"></i> Anterior
     </button>
     <span class="pagina-actual" data-tabla="cargos">1</span>
-    <button class="enlace paginacion-btn" data-tabla="cargos" data-accion="siguiente">
+    <button class="paginacion-btn" data-tabla="cargos" data-accion="siguiente">
         Siguiente <i class="bi bi-chevron-right"></i>
     </button>
 </div>
@@ -124,7 +124,7 @@
         <div class="modal-contenido" style="max-width: 600px;">
             <span class="cerrar">&times;</span>
             <h3>Reporte de Departamento</h3>
-            
+            <br>
             <div class="reporte-form">
                 <div class="input-group">
                     <label for="anioReporteDepto">Año:</label>
@@ -134,9 +134,9 @@
                 <div class="input-group">
                     <label>Rango de meses:</label>
                     <div class="meses-container" style="display: flex; align-items: center; gap: 10px;">
-                        <select id="mesInicioDepto" class="custom-select"></select>
+                        <select id="mesInicioDepto" class="seleccionable1"></select>
                         <span>a</span>
-                        <select id="mesFinDepto" class="custom-select"></select>
+                        <select id="mesFinDepto" class="seleccionable1"></select>
                     </div>
                 </div>
 
@@ -152,5 +152,3 @@
     <script src="../../js/logout.js"></script>
 </body>
 </html>
-
-

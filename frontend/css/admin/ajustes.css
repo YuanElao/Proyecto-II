@@ -267,6 +267,48 @@ main {
   box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
 }
 
+/* =========== PAGINACIÓN UNIFICADA =========== */
+.paginacion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    padding: 10px 0;
+}
+
+.paginacion-btn {
+    padding: 8px 12px;
+    background: #1e3a8a;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    font-family: "Poppins", Arial, sans-serif;
+}
+
+.paginacion-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.paginacion-btn:disabled {
+    background: #6b7280;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pagina-actual {
+    font-weight: 600;
+    color: #e4e6eb;
+    min-width: 30px;
+    text-align: center;
+}
+
 #backup-status {
   margin-top: 15px;
   padding: 12px;

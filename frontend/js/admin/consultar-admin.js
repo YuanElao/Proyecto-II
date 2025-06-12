@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const departamentoSelect = document.getElementById("departamentoModal");
   const cargoSelect = document.getElementById("cargoModal");
 
+  
+const itemsPorPagina = 10; // Ajusta este número según prefieras
+let paginaActual = 1;
+let todosTrabajadores = [];
+
+
   // Función  cargar cargos
   const loadCargos = async (departamentoId, targetElement) => {
     try {
@@ -89,19 +95,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       );
 
-      const trabajadores = await response.json();
-      tableBody.innerHTML = trabajadores
-        .map(
-          (t) => `
-                <tr>
-                    <td>${t.nombre}</td>
-                    <td>${t.apellido}</td>
-                    <td>${t.t_cedula}</td>
-                    <td>${t.departamento}</td>
-                    <td>${t.cargo}</td>
-                </tr>`
-        )
-        .join("");
+        todosTrabajadores = await response.json();
+        actualizarTabla();
+
 
       document.getElementById("data-table").addEventListener("click", (e) => {
         const fila = e.target.closest("tr");
@@ -119,6 +115,53 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Error cargando trabajadores:", error);
     }
   };
+
+  const actualizarTabla = () => {
+    const inicio = (paginaActual - 1) * itemsPorPagina;
+    const fin = inicio + itemsPorPagina;
+    const trabajadoresPagina = todosTrabajadores.slice(inicio, fin);
+
+    tableBody.innerHTML = trabajadoresPagina
+        .map(
+            (t) => `
+            <tr>
+                <td>${t.nombre}</td>
+                <td>${t.apellido}</td>
+                <td>${t.t_cedula}</td>
+                <td>${t.departamento}</td>
+                <td>${t.cargo}</td>
+            </tr>`
+        )
+        .join("");
+
+    // Actualizar controles de paginación
+    actualizarControlesPaginacion();
+};
+
+// Función para actualizar los controles de paginación
+const actualizarControlesPaginacion = () => {
+    const totalPaginas = Math.ceil(todosTrabajadores.length / itemsPorPagina);
+    const paginaActualElement = document.querySelector('.pagina-actual');
+    const [btnAnterior, btnSiguiente] = document.querySelectorAll('.paginacion-btn');
+
+    paginaActualElement.textContent = paginaActual;
+    btnAnterior.disabled = paginaActual <= 1;
+    btnSiguiente.disabled = paginaActual >= totalPaginas;
+};
+
+document.addEventListener('click', (e) => {
+    if (e.target.closest('.paginacion-btn')) {
+        const accion = e.target.closest('.paginacion-btn').dataset.accion;
+        
+        if (accion === 'anterior' && paginaActual > 1) {
+            paginaActual--;
+        } else if (accion === 'siguiente' && paginaActual < Math.ceil(todosTrabajadores.length / itemsPorPagina)) {
+            paginaActual++;
+        }
+        
+        actualizarTabla();
+    }
+});
 
   // Eventos comunes para filtros
   const handleDepartamentoChange = async (e, isFilter = true) => {

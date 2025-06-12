@@ -267,7 +267,7 @@ actualizarControlesPaginacion(accounts.length);
                     <td>
                         ${
                           canModify
-                            ? `<button class="action-btn edit-btn" data-id="${account.c_id}">Editar</button>`
+                            ? `<button class="action-btn edit-btn" data-id="${account.c_id}">Modificar</button>`
                             : ""
                         }
                         ${
